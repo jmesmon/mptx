@@ -15,6 +15,8 @@
 /********************/
 /**  SPI routines  **/
 /********************/
+#include "Pins.h"
+#include "Multiprotocol.h"
 #ifdef STM32_BOARD
 
 SPIClass SPI_2(2); 							//Create an instance of the SPI Class called SPI_2 that uses the 2nd SPI Port

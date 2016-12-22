@@ -23,6 +23,17 @@
 #include <avr/pgmspace.h>
 //#define DEBUG_TX
 #include "Multiprotocol.h"
+#include "Telemetry.hh"
+#include "A7105_SPI.hh"
+#include "CYRF6936_SPI.hh"
+#include "CC2500_SPI.hh"
+#include "NRF24l01_SPI.hh"
+#include "Hontai_nrf24l01.hh"
+#include "ASSAN_nrf24l01.hh"
+#include "FQ777_nrf24l01.hh"
+#include "SHENQI_nrf24l01.hh"
+#include "FY326_nrf24l01.hh"
+#include "MJXQ_nrf24l01.hh"
 
 //Multiprotocol module configuration file
 #include "_Config.h"
@@ -132,7 +143,7 @@ volatile uint8_t discard_frame = 0;
 uint8_t pkt[MAX_PKT];//telemetry receiving packets
 #if defined(TELEMETRY)
 	#ifdef INVERT_TELEMETRY
-		#if not defined(ORANGE_TX) && not defined(STM32_BOARD)
+		#if ! defined(ORANGE_TX) && ! defined(STM32_BOARD)
 			// enable bit bash for serial
 			#define	BASH_SERIAL 1
 		#endif
@@ -158,6 +169,55 @@ uint8_t pkt[MAX_PKT];//telemetry receiving packets
 // Callback
 typedef uint16_t (*void_function_t) (void);//pointer to a function with no parameters which return an uint16_t integer
 void_function_t remote_callback = 0;
+
+#if ! defined (ORANGE_TX) && ! defined (STM32_BOARD)
+static void random_init(void)
+{
+	cli();					// Temporarily turn off interrupts, until WDT configured
+	MCUSR = 0;				// Use the MCU status register to reset flags for WDR, BOR, EXTR, and POWR
+	WDTCSR |= _BV(WDCE);	// WDT control register, This sets the Watchdog Change Enable (WDCE) flag, which is  needed to set the prescaler
+	WDTCSR = _BV(WDIE);		// Watchdog interrupt enable (WDIE)
+	sei();					// Turn interupts on
+}
+
+static uint32_t random_value(void)
+{
+	while (!gWDT_entropy);
+	return gWDT_entropy;
+}
+#endif
+
+static void protocol_init();
+static void update_led_status(void);
+void update_serial_data();
+inline void tx_resume();
+inline void tx_pause();
+static void update_channels_aux(void);
+static uint32_t random_id(uint16_t adress, uint8_t create_new);
+void PPM_Telemetry_serial_init();
+void Mprotocol_serial_init();
+void Update_All();
+static void set_rx_tx_addr(uint32_t id);
+
+void modules_reset()
+{
+	#ifdef	CC2500_INSTALLED
+		CC2500_Reset();
+	#endif
+	#ifdef	A7105_INSTALLED
+		A7105_Reset();
+	#endif
+	#ifdef	CYRF6936_INSTALLED
+		CYRF_Reset();
+	#endif
+	#ifdef	NRF24L01_INSTALLED
+		NRF24L01_Reset();
+	#endif
+
+	//Wait for every component to reset
+	delayMilliseconds(100);
+	prev_power=0xFD;		// unused power value
+}
 
 // Init
 void setup()
@@ -939,26 +999,6 @@ void update_serial_data()
 	#endif
 }
 
-void modules_reset()
-{
-	#ifdef	CC2500_INSTALLED
-		CC2500_Reset();
-	#endif
-	#ifdef	A7105_INSTALLED
-		A7105_Reset();
-	#endif
-	#ifdef	CYRF6936_INSTALLED
-		CYRF_Reset();
-	#endif
-	#ifdef	NRF24L01_INSTALLED
-		NRF24L01_Reset();
-	#endif
-
-	//Wait for every component to reset
-	delayMilliseconds(100);
-	prev_power=0xFD;		// unused power value
-}
-
 void Mprotocol_serial_init()
 {
 	#ifdef ORANGE_TX
@@ -1031,23 +1071,6 @@ static void set_rx_tx_addr(uint32_t id)
 	rx_tx_addr[3] = (id >>  0) & 0xFF;
 	rx_tx_addr[4] = (rx_tx_addr[2]&0xF0)|(rx_tx_addr[3]&0x0F);
 }
-
-#if not defined (ORANGE_TX) && not defined (STM32_BOARD)
-static void random_init(void)
-{
-	cli();					// Temporarily turn off interrupts, until WDT configured
-	MCUSR = 0;				// Use the MCU status register to reset flags for WDR, BOR, EXTR, and POWR
-	WDTCSR |= _BV(WDCE);	// WDT control register, This sets the Watchdog Change Enable (WDCE) flag, which is  needed to set the prescaler
-	WDTCSR = _BV(WDIE);		// Watchdog interrupt enable (WDIE)
-	sei();					// Turn interupts on
-}
-
-static uint32_t random_value(void)
-{
-	while (!gWDT_entropy);
-	return gWDT_entropy;
-}
-#endif
 
 static uint32_t random_id(uint16_t adress, uint8_t create_new)
 {
@@ -1198,7 +1221,7 @@ static uint32_t random_id(uint16_t adress, uint8_t create_new)
 			TX_RX_PAUSE_off;
 			tx_resume();
 		}
-		#if not defined (ORANGE_TX) && not defined (STM32_BOARD)
+		#if ! defined (ORANGE_TX) && ! defined (STM32_BOARD)
 			cli() ;
 			UCSR0B |= _BV(RXCIE0) ;			// RX interrupt enable
 		#endif
@@ -1223,7 +1246,7 @@ static uint32_t random_id(uint16_t adress, uint8_t create_new)
 	}
 #endif //ENABLE_SERIAL
 
-#if not defined (ORANGE_TX) && not defined (STM32_BOARD)
+#if ! defined (ORANGE_TX) && ! defined (STM32_BOARD)
 	// Random interrupt service routine called every time the WDT interrupt is triggered.
 	// It is only enabled at startup to generate a seed.
 	ISR(WDT_vect)

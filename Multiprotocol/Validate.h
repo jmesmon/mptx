@@ -2,16 +2,16 @@
 #if defined (STM32_BOARD) && defined (ORANGE_TX)
 	#error You must comment the board type STM32_BOARD in _Config.h to compile ORANGE_TX
 #endif
-#if not defined (ORANGE_TX) && not defined (STM32_BOARD)
+#if ! defined (ORANGE_TX) && ! defined (STM32_BOARD)
 	//Atmega328p
-	#if not defined(ARDUINO_AVR_PRO) && not defined(ARDUINO_AVR_MINI) && not defined(ARDUINO_AVR_NANO)
+	#if ! defined(ARDUINO_AVR_PRO) && ! defined(ARDUINO_AVR_MINI) && ! defined(ARDUINO_AVR_NANO)
 		#error You must select one of these boards: "Multi 4-in-1", "Arduino Pro or Pro Mini" or "Arduino Mini"
 	#endif
-	#if F_CPU != 16000000L || not defined(__AVR_ATmega328P__)
+	#if F_CPU != 16000000L || ! defined(__AVR_ATmega328P__)
 		#error You must select the processor type "ATmega328(5V, 16MHz)"
 	#endif
 #endif
-#if defined (STM32_BOARD) && not defined (ORANGE_TX)
+#if defined (STM32_BOARD) && ! defined (ORANGE_TX)
 	//STM32
 	#ifndef ARDUINO_GENERIC_STM32F103C
 		#error You must select the board type "Generic STM32F103C series"
@@ -78,26 +78,26 @@
 	#undef DSM_TELEMETRY
 	#undef MULTI_TELEMETRY
 #else
-	#if not defined(BAYANG_NRF24L01_INO)
+	#if ! defined(BAYANG_NRF24L01_INO)
 		#undef BAYANG_HUB_TELEMETRY
 	#endif
-	#if not defined(HUBSAN_A7105_INO)
+	#if ! defined(HUBSAN_A7105_INO)
 		#undef HUBSAN_HUB_TELEMETRY
 	#endif
-	#if not defined(AFHDS2A_A7105_INO)
+	#if ! defined(AFHDS2A_A7105_INO)
 		#undef 	AFHDS2A_HUB_TELEMETRY
 		#undef 	AFHDS2A_FW_TELEMETRY
 	#endif
-	#if not defined(FRSKYD_CC2500_INO)
+	#if ! defined(FRSKYD_CC2500_INO)
 		#undef HUB_TELEMETRY
 	#endif
-	#if not defined(FRSKYX_CC2500_INO)
+	#if ! defined(FRSKYX_CC2500_INO)
 		#undef SPORT_TELEMETRY
 	#endif
-	#if not defined(DSM_CYRF6936_INO)
+	#if ! defined(DSM_CYRF6936_INO)
 		#undef DSM_TELEMETRY
 	#endif
-	#if not defined(DSM_TELEMETRY) && not defined(SPORT_TELEMETRY) && not defined(HUB_TELEMETRY) && not defined(HUBSAN_HUB_TELEMETRY) && not defined(BAYANG_HUB_TELEMETRY) && not defined(AFHDS2A_HUB_TELEMETRY) && not defined(AFHDS2A_FW_TELEMETRY)
+	#if ! defined(DSM_TELEMETRY) && ! defined(SPORT_TELEMETRY) && ! defined(HUB_TELEMETRY) && ! defined(HUBSAN_HUB_TELEMETRY) && ! defined(BAYANG_HUB_TELEMETRY) && ! defined(AFHDS2A_HUB_TELEMETRY) && ! defined(AFHDS2A_FW_TELEMETRY)
 		#undef TELEMETRY
 		#undef INVERT_TELEMETRY
 	#endif
@@ -107,6 +107,6 @@
 #ifndef AILERON
 	#error You must select a correct channel order.
 #endif
-#if not defined(PPM_MAX_100) || not defined(PPM_MIN_100) || not defined(PPM_MAX_125) || not defined(PPM_MIN_125)
+#if ! defined(PPM_MAX_100) || ! defined(PPM_MIN_100) || ! defined(PPM_MAX_125) || ! defined(PPM_MIN_125)
 	#error You must set correct TX end points.
 #endif
