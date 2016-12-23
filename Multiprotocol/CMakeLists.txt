@@ -18,7 +18,7 @@ add_definitions("-DARDUINO_ARCH_AVR=1")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_COMPILE_FLAGS}")
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${CMAKE_COMPILE_FLAGS}")
 
-set(ARDUINO_SDK "/usr/share/arduino")
+set(ARDUINO_SDK "arduino")
 set(ARDUINO_SRC pins_arduino.c wiring.c wiring_analog.c
 	wiring_digital.c wiring_pulse.c wiring_serial.c
 	wiring_shift.c WInterrupts.c
@@ -62,7 +62,7 @@ function(add_arduino_exe _exe)
 	add_custom_command(OUTPUT combined.cc
 		MAIN_DEPENDENCY arduino_prefix.cc
 		DEPENDS ${_src}
-		COMMAND ${CMAKE_COMMAND} -DCOMBINE_FILES="${_src_abs}" -DCOMBINE_OUTPUT="${CMAKE_CURRENT_BINARY_DIR}/combined.cc" -P "${CMAKE_SOURCE_DIR}/combine.cmake" 
+		COMMAND ${CMAKE_COMMAND} -DCOMBINE_FILES="${_src_abs}" -DCOMBINE_OUTPUT="${CMAKE_CURRENT_BINARY_DIR}/combined.cc" -P "${CMAKE_SOURCE_DIR}/combine.cmake"
 	)
 	#add_executable(${_exe}-combine.elf ${CMAKE_CURRENT_BINARY_DIR}/combined.cc)
 	#target_include_directories(${_exe}-combine.elf PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -80,8 +80,8 @@ endfunction()
 
 add_arduino_exe(multi
 	A7105_SPI.ino AFHDS2A_a7105.ino ASSAN_nrf24l01.ino
-	Arduino.ino Bayang_nrf24l01.ino CC2500_SPI.ino 	CG023_nrf24l01.ino
-	CX10_nrf24l01.ino CYRF6936_SPI.ino Convert.ino DSM_cyrf6936.ino
+	Arduino.ino Bayang_nrf24l01.ino CC2500_SPI.ino CG023_nrf24l01.ino
+	CX10_nrf24l01.ino CYRF6936_SPI.ino Common.ino DSM_cyrf6936.ino
 	Devo_cyrf6936.ino ESky_nrf24l01.ino FQ777_nrf24l01.ino
 	FY326_nrf24l01.ino FlySky_a7105.ino FrSkyD_cc2500.ino
 	FrSkyV_cc2500.ino FrSkyX_cc2500.ino Hisky_nrf24l01.ino
