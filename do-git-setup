@@ -1,0 +1,3 @@
+#! /bin/sh
+
+git remote add diy https://github.com/pascallanger/DIY-Multiprotocol-TX-Module.git
