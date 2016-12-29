@@ -89,7 +89,7 @@ void SPI_SET_UNIDIRECTIONAL()
 	SPI2_BASE->CR1 &= ~SPI_CR1_BIDIMODE;
 }
 
-#else
+#else /* if !STM32_BOARD */
 
 #ifdef ORANGE_TX
 	#define XNOP() NOP()
