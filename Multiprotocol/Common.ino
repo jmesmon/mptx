@@ -12,8 +12,7 @@
  You should have received a copy of the GNU General Public License
  along with Multiprotocol.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Convert.hh"
-#include "Multiprotocol.hh"
+#include "Common.hh"
 
 /************************/
 /**  Convert routines  **/
