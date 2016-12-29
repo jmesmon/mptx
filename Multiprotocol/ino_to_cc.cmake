@@ -1,6 +1,5 @@
 file(REMOVE "${OUTPUT}.tmp")
 file(APPEND "${OUTPUT}.tmp" "#include \"Arduino.h\"\n")
-file(APPEND "${OUTPUT}.tmp" "#include \"Servo.h\"\n")
 file(APPEND "${OUTPUT}.tmp" "#line 1 \"${SOURCE}\"\n")
 file(READ   "${SOURCE}" _file_contents)
 file(APPEND "${OUTPUT}.tmp" "${_file_contents}")
