@@ -24,7 +24,6 @@
 #include "Arduino.hh"
 #include "CC2500_SPI.hh"
 #include "iface_cc2500.h"
-#include "Multiprotocol.hh"
 
 //----------------------------
 void CC2500_WriteReg(uint8_t address, uint8_t data)
