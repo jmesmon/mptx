@@ -24,6 +24,7 @@
 //#define DEBUG_TX
 #include "Multiprotocol.h"
 #include "Telemetry.hh"
+#include "Arduino.hh"
 
 #include "A7105_SPI.hh"
 #include "AFHDS2A_a7105.hh"
@@ -161,32 +162,7 @@ volatile uint8_t rx_ok_buff[RXBUFFER_SIZE];
 volatile uint8_t discard_frame = 0;
 
 // Telemetry
-#define MAX_PKT 29
 uint8_t pkt[MAX_PKT];//telemetry receiving packets
-#if defined(TELEMETRY)
-	#ifdef INVERT_TELEMETRY
-		#if ! defined(ORANGE_TX) && ! defined(STM32_BOARD)
-			// enable bit bash for serial
-			#define	BASH_SERIAL 1
-		#endif
-		#define	INVERT_SERIAL 1
-	#endif
-	uint8_t pass = 0;
-	uint8_t pktt[MAX_PKT];//telemetry receiving packets
-	#ifndef BASH_SERIAL
-		#define TXBUFFER_SIZE 32
-		volatile uint8_t tx_buff[TXBUFFER_SIZE];
-		volatile uint8_t tx_head=0;
-		volatile uint8_t tx_tail=0;
-	#endif // BASH_SERIAL
-	uint8_t v_lipo1;
-	uint8_t v_lipo2;
-	int16_t RSSI_dBm;
-	uint8_t TX_RSSI;
-	uint8_t telemetry_link=0; 
-	uint8_t telemetry_counter=0;
-	uint8_t telemetry_lost;
-#endif 
 
 // Callback
 typedef uint16_t (*void_function_t) (void);//pointer to a function with no parameters which return an uint16_t integer
@@ -221,7 +197,7 @@ void Mprotocol_serial_init();
 void Update_All();
 static void set_rx_tx_addr(uint32_t id);
 
-void modules_reset()
+static void modules_reset(void)
 {
 	#ifdef	CC2500_INSTALLED
 		CC2500_Reset();
@@ -636,49 +612,6 @@ static void update_led_status(void)
 	}
 }
 
-inline void tx_pause()
-{
-	#ifdef TELEMETRY
-	// Pause telemetry by disabling transmitter interrupt
-		#ifdef ORANGE_TX
-			USARTC0.CTRLA &= ~0x03 ;
-		#else
-			#ifndef BASH_SERIAL
-				#ifdef STM32_BOARD
-					USART3_BASE->CR1 &= ~ USART_CR1_TXEIE;
-				#else
-					UCSR0B &= ~_BV(UDRIE0);
-				#endif
-			#endif
-		#endif
-	#endif
-}
-
-inline void tx_resume()
-{
-	#ifdef TELEMETRY
-	// Resume telemetry by enabling transmitter interrupt
-		if(!IS_TX_PAUSE_on)
-		{
-			#ifdef ORANGE_TX
-				cli() ;
-				USARTC0.CTRLA = (USARTC0.CTRLA & 0xFC) | 0x01 ;
-				sei() ;
-			#else
-				#ifndef BASH_SERIAL
-					#ifdef STM32_BOARD
-						USART3_BASE->CR1 |= USART_CR1_TXEIE;
-					#else
-						UCSR0B |= _BV(UDRIE0);			
-					#endif
-				#else
-					resumeBashSerial();
-				#endif
-			#endif
-		}
-	#endif
-}
-
 #ifdef STM32_BOARD	
 void start_timer2()
 {	
@@ -701,18 +634,7 @@ static void protocol_init()
 	remote_callback = 0;
 
 	// reset telemetry
-	#ifdef TELEMETRY
-		tx_pause();
-		pass=0;
-		telemetry_link=0;
-		telemetry_lost=1;
-		#ifndef BASH_SERIAL
-			tx_tail=0;
-			tx_head=0;
-		#endif
-		TX_RX_PAUSE_off;
-		TX_MAIN_PAUSE_off;
-	#endif
+	telemetry_reset();
 
 	//Set global ID and rx_tx_addr
 	MProtocol_id = RX_num + MProtocol_id_master;

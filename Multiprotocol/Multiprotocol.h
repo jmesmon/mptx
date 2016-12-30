@@ -608,19 +608,13 @@ Type 0x06 Flysky AFHDS2 telemetry data
 
 extern uint8_t protocol_flags, protocol_flags2;
 extern uint8_t hopping_frequency_no;
-extern uint8_t telemetry_lost;
 extern uint16_t bind_counter;
 extern uint16_t packet_period;
 extern uint8_t packet_count;
-extern uint8_t telemetry_counter;
-extern uint8_t TX_RSSI;
 extern uint16_t state;
 extern uint8_t option;
 extern uint8_t phase;
 extern uint8_t packet_length;
-extern uint8_t telemetry_link;
-extern uint8_t v_lipo1, v_lipo2;
-extern int16_t RSSI_dBm;
 extern uint8_t packet[40];
 
 #define NUM_CHN 16
