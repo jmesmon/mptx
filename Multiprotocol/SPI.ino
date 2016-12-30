@@ -15,6 +15,7 @@
 /********************/
 /**  SPI routines  **/
 /********************/
+#include "SPI.hh"
 #include "Pins.h"
 #include "Multiprotocol.h"
 #ifdef STM32_BOARD
