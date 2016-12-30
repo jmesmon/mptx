@@ -12,6 +12,8 @@
  You should have received a copy of the GNU General Public License
  along with Multiprotocol.  If not, see <http://www.gnu.org/licenses/>.
  */
+#pragma once
+#include <stdint.h>
 
 //******************
 // Version
@@ -27,7 +29,7 @@
 enum PROTOCOLS
 {
 	MODE_SERIAL		= 0,	// Serial commands
-	MODE_FLYSKY 	= 1,	// =>A7105
+	MODE_FLYSKY		= 1,	// =>A7105
 	MODE_HUBSAN		= 2,	// =>A7105
 	MODE_FRSKYD		= 3,	// =>CC2500
 	MODE_HISKY		= 4,	// =>NRF24L01
@@ -53,8 +55,8 @@ enum PROTOCOLS
 	MODE_ASSAN		= 24,	// =>NRF24L01
 	MODE_FRSKYV		= 25,	// =>CC2500
 	MODE_HONTAI		= 26,	// =>NRF24L01
-	MODE_OPENLRS	= 27,	// =>OpenLRS hardware
-	MODE_AFHDS2A	= 28,	// =>A7105
+	MODE_OPENLRS		= 27,	// =>OpenLRS hardware
+	MODE_AFHDS2A		= 28,	// =>A7105
 	MODE_Q2X2		= 29,	// =>NRF24L01, extension of CX-10 protocol
 };
 
@@ -603,3 +605,62 @@ Type 0x06 Flysky AFHDS2 telemetry data
    data[1-28] telemetry data
 
 */
+
+extern uint8_t protocol_flags, protocol_flags2;
+extern uint8_t hopping_frequency_no;
+extern uint8_t telemetry_lost;
+extern uint16_t bind_counter;
+extern uint16_t packet_period;
+extern uint8_t packet_count;
+extern uint8_t telemetry_counter;
+extern uint8_t TX_RSSI;
+extern uint16_t state;
+extern uint8_t option;
+extern uint8_t phase;
+extern uint8_t packet_length;
+extern uint8_t telemetry_link;
+extern uint8_t v_lipo1, v_lipo2;
+extern int16_t RSSI_dBm;
+extern uint8_t packet[40];
+
+#define NUM_CHN 16
+extern uint16_t servo_max_100,servo_min_100, servo_max_125, servo_min_125;
+extern uint16_t Servo_data[NUM_CHN];
+extern uint8_t rx_tx_addr[5];
+extern uint8_t  hopping_frequency[50];
+extern uint8_t prev_power;
+extern uint32_t MProtocol_id;
+
+extern uint8_t protocol;
+extern uint8_t sub_protocol;
+#define MAX_PKT 29
+extern uint8_t pkt[MAX_PKT];//telemetry receiving packets
+extern uint8_t  rx_id[4];
+
+extern const uint8_t CH_AETR[];
+extern const uint8_t CH_TAER[];
+extern const uint8_t CH_RETA[];
+extern const uint8_t CH_EATR[];
+
+extern uint8_t RX_num;
+extern uint8_t bind_phase;
+extern uint8_t Servo_AUX;
+extern uint8_t  throttle, rudder, elevator, aileron;
+extern uint8_t flags;
+extern uint8_t prev_option;
+extern uint8_t  cyrfmfg_id[6];
+extern uint8_t mode_select;
+extern uint8_t *hopping_frequency_ptr;
+extern uint32_t MProtocol_id_master;
+extern uint8_t  packet_sent;
+extern uint8_t  rf_ch_num;
+extern uint8_t  channel;
+extern uint16_t servo_mid;
+extern uint16_t counter;
+extern uint8_t  len;
+extern uint8_t  binding_idx;
+extern uint16_t seed;
+extern uint8_t  crc8;
+#if defined(FRSKYX_CC2500_INO) || defined(SFHSS_CC2500_INO)
+extern uint8_t calData[48];
+#endif
