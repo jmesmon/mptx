@@ -12,6 +12,7 @@
  You should have received a copy of the GNU General Public License
  along with Multiprotocol.  If not, see <http://www.gnu.org/licenses/>.
  */
+#pragma once
 
 /**********************************************/
 /** Multiprotocol module configuration file ***/
@@ -168,6 +169,7 @@
 //The table below indicates which protocol to run when a specific position on the dial has been selected.
 //All fields and values are explained below. Everything is configurable from here like in the Serial mode.
 //Example: You can associate multiple times the same protocol to different dial positions to take advantage of the model match (RX_Num)
+#include "Multiprotocol.h"
 const PPM_Parameters PPM_prot[15]=	{
 //	Dial	Protocol 		Sub protocol	RX_Num	Power		Auto Bind		Option
 /*	1	*/	{MODE_FLYSKY,	Flysky		,	0	,	P_HIGH	,	NO_AUTOBIND	,	0		},
