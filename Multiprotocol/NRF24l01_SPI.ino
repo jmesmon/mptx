@@ -15,6 +15,9 @@
 
 
 #ifdef NRF24L01_INSTALLED
+#include "NRF24l01_SPI.hh"
+#include "SPI.hh"
+#include "Pins.h"
 #include "iface_nrf24l01.h"
 
 
@@ -24,7 +27,7 @@
 
 uint8_t rf_setup;
 
-void NRF24L01_Initialize()
+void NRF24L01_Initialize(void)
 {
     rf_setup = 0x09;
 	XN297_SetScrambledMode(XN297_SCRAMBLED);
@@ -76,7 +79,7 @@ uint8_t NRF24L01_ReadReg(uint8_t reg)
 }
 */
 
-static void NRF24L01_ReadPayload(uint8_t * data, uint8_t length)
+void NRF24L01_ReadPayload(uint8_t * data, uint8_t length)
 {
 	NRF_CSN_off;
 	SPI_Write(R_RX_PAYLOAD);
@@ -92,12 +95,12 @@ static void  NRF24L01_Strobe(uint8_t state)
 	NRF_CSN_on;
 }
 
-void NRF24L01_FlushTx()
+void NRF24L01_FlushTx(void)
 {
 	NRF24L01_Strobe(FLUSH_TX);
 }
 
-void NRF24L01_FlushRx()
+void NRF24L01_FlushRx(void)
 {
 	NRF24L01_Strobe(FLUSH_RX);
 }
@@ -156,7 +159,7 @@ void NRF24L01_SetBitrate(uint8_t bitrate)
     NRF24L01_WriteReg(NRF24L01_06_RF_SETUP, rf_setup);
 }
 */
-void NRF24L01_SetPower()
+void NRF24L01_SetPower(void)
 {
 	uint8_t power=NRF_BIND_POWER;
 	if(IS_BIND_DONE_on)
@@ -278,7 +281,7 @@ static uint8_t bit_reverse(uint8_t b_in)
 }
 
 static const uint16_t polynomial = 0x1021;
-static uint16_t crc16_update(uint16_t crc, uint8_t a)
+uint16_t crc16_update(uint16_t crc, uint8_t a)
 {
 	crc ^= a << 8;
     for (uint8_t i = 0; i < 8; ++i)
@@ -406,13 +409,6 @@ uint8_t LT8900_Preamble_Len;
 uint8_t LT8900_Tailer_Len;
 uint8_t LT8900_CRC_Initial_Data;
 uint8_t LT8900_Flags;
-#define LT8900_CRC_ON 6
-#define LT8900_SCRAMBLE_ON 5
-#define LT8900_PACKET_LENGTH_EN 4
-#define LT8900_DATA_PACKET_TYPE_1 3
-#define LT8900_DATA_PACKET_TYPE_0 2
-#define LT8900_FEC_TYPE_1 1
-#define LT8900_FEC_TYPE_0 0
 
 void LT8900_Config(uint8_t preamble_len, uint8_t trailer_len, uint8_t flags, uint8_t crc_init)
 {
@@ -462,7 +458,7 @@ void LT8900_SetTxRxMode(enum TXRX_State mode)
 			NRF24L01_SetTxRxMode(TXRX_OFF);
 }
 
-void LT8900_BuildOverhead()
+static void LT8900_BuildOverhead()
 {
 	uint8_t pos;
 
