@@ -16,7 +16,13 @@
 /** A7105 routines **/
 /********************/
 #ifdef A7105_INSTALLED
+#include "A7105_SPI.hh"
+#include "Arduino.hh"
+#include "Pins.h"
+#include "SPI.hh"
 #include "iface_a7105.h"
+
+void A7105_WriteReg(uint8_t address, uint8_t data);
 
 void A7105_WriteData(uint8_t len, uint8_t channel)
 {
@@ -142,7 +148,7 @@ static void A7105_SetPower_Value(int power)
 }
 */
 
-void A7105_SetPower()
+void A7105_SetPower(void)
 {
 	uint8_t power=A7105_BIND_POWER;
 	if(IS_BIND_DONE_on)
@@ -186,8 +192,6 @@ const uint8_t PROGMEM AFHDS2A_A7105_regs[] = {
 };
 #endif
 
-#define ID_NORMAL 0x55201041
-#define ID_PLUS   0xAA201041
 void A7105_Init(void)
 {
 	uint8_t *A7105_Regs=0;
