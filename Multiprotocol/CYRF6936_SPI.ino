@@ -13,7 +13,13 @@
  along with Multiprotocol.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifdef CYRF6936_INSTALLED
+#include "CYRF6936_SPI.hh"
+#include "Pins.h"
+#include "Arduino.hh"
+#include "SPI.hh"
 #include "iface_cyrf6936.h"
+
+void CYRF_SetTxRxMode(uint8_t mode);
 
 void CYRF_WriteRegister(uint8_t address, uint8_t data)
 {
@@ -192,7 +198,7 @@ void CYRF_ReadDataPacketLen(uint8_t dpbuffer[], uint8_t length)
     CYRF_ReadRegisterMulti(CYRF_21_RX_BUFFER, dpbuffer, length);
 }
 
-static void CYRF_WriteDataPacketLen(const uint8_t dpbuffer[], uint8_t len)
+void CYRF_WriteDataPacketLen(const uint8_t dpbuffer[], uint8_t len)
 {
 	CYRF_WriteRegister(CYRF_01_TX_LENGTH, len);
 	CYRF_WriteRegister(CYRF_02_TX_CTRL, 0x40);
@@ -292,7 +298,7 @@ const uint8_t PROGMEM DEVO_j6pro_sopcodes[][8] = {
 #endif
 };
 #endif
-static void __attribute__((unused)) CYRF_PROGMEM_ConfigSOPCode(const uint8_t *data)
+void __attribute__((unused)) CYRF_PROGMEM_ConfigSOPCode(const uint8_t *data)
 {
 	uint8_t code[8];
 	for(uint8_t i=0;i<8;i++)
