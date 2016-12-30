@@ -24,7 +24,7 @@
 //Uncomment one of the line below if you have a different module not based on the original Multi Atmega328p design which includes the 4-in-1.
 //If you don't know then leave them commented.
 #ifdef __arm__
-	#define STM32_BOARD	// Let's automatically select this board if arm is selected since this is the only one for now...
+	#define STM32_BOARD 1	// Let's automatically select this board if arm is selected since this is the only one for now...
 #endif
 
 
@@ -34,7 +34,7 @@
 //Modify the channel order based on your TX: AETR, TAER, RETA...
 //Examples: Flysky & DEVO is AETR, JR/Spektrum radio is TAER, Multiplex is AERT...
 //Default is AETR.
-#define AETR
+#define AETR 1
 
 //Uncomment to reverse the direction of the specified channel for all protocols
 //#define REVERSE_AILERON
@@ -50,10 +50,10 @@
 //If a chip is not installed all associated protocols are disabled.
 //4-in-1 modules have all RF chips installed
 //!!!If a RF chip is present it MUST be marked as installed!!! or weird things will happen you have been warned.
-#define A7105_INSTALLED
-#define CYRF6936_INSTALLED
-#define CC2500_INSTALLED
-#define NRF24L01_INSTALLED
+#define A7105_INSTALLED 1
+#define CYRF6936_INSTALLED 1
+#define CC2500_INSTALLED 1
+#define NRF24L01_INSTALLED 1
 
 
 /****************************/
@@ -64,39 +64,39 @@
 //Comment the protocols you are not using with "//" to save Flash space.
 
 //The protocols below need an A7105 to be installed
-#define	FLYSKY_A7105_INO
-#define	HUBSAN_A7105_INO
-#define	AFHDS2A_A7105_INO
+#define	FLYSKY_A7105_INO 1
+#define	HUBSAN_A7105_INO 1
+#define	AFHDS2A_A7105_INO 1
 
 //The protocols below need a CYRF6936 to be installed
-#define	DEVO_CYRF6936_INO
-#define	DSM_CYRF6936_INO
-#define	J6PRO_CYRF6936_INO
+#define	DEVO_CYRF6936_INO 1
+#define	DSM_CYRF6936_INO 1
+#define	J6PRO_CYRF6936_INO 1
 
 //The protocols below need a CC2500 to be installed
-#define	FRSKYV_CC2500_INO
-#define	FRSKYD_CC2500_INO
-#define	FRSKYX_CC2500_INO
-#define	SFHSS_CC2500_INO
+#define	FRSKYV_CC2500_INO 1
+#define	FRSKYD_CC2500_INO 1
+#define	FRSKYX_CC2500_INO 1
+#define	SFHSS_CC2500_INO 1
 
 //The protocols below need a NRF24L01 to be installed
-#define	BAYANG_NRF24L01_INO
-#define	CG023_NRF24L01_INO
-#define	CX10_NRF24L01_INO		// Include Q2X2 protocol
-#define	ESKY_NRF24L01_INO
-#define	HISKY_NRF24L01_INO
-#define	KN_NRF24L01_INO
-#define	SLT_NRF24L01_INO
-#define	SYMAX_NRF24L01_INO
-#define	V2X2_NRF24L01_INO
-#define	YD717_NRF24L01_INO
-#define	MT99XX_NRF24L01_INO
-#define	MJXQ_NRF24L01_INO
-#define	SHENQI_NRF24L01_INO
-#define	FY326_NRF24L01_INO
-#define	FQ777_NRF24L01_INO
-#define	ASSAN_NRF24L01_INO
-#define	HONTAI_NRF24L01_INO
+#define	BAYANG_NRF24L01_INO 1
+#define	CG023_NRF24L01_INO 1
+#define	CX10_NRF24L01_INO 1		// Include Q2X2 protocol
+#define	ESKY_NRF24L01_INO 1
+#define	HISKY_NRF24L01_INO 1
+#define	KN_NRF24L01_INO 1
+#define	SLT_NRF24L01_INO 1
+#define	SYMAX_NRF24L01_INO 1
+#define	V2X2_NRF24L01_INO 1
+#define	YD717_NRF24L01_INO 1
+#define	MT99XX_NRF24L01_INO 1
+#define	MJXQ_NRF24L01_INO 1
+#define	SHENQI_NRF24L01_INO 1
+#define	FY326_NRF24L01_INO 1
+#define	FQ777_NRF24L01_INO 1
+#define	ASSAN_NRF24L01_INO 1
+#define	HONTAI_NRF24L01_INO 1
 
 
 /**************************/
@@ -105,7 +105,7 @@
 //In this section you can configure the telemetry.
 
 //If you do not plan using the telemetry comment this global setting using "//" and skip to the next section.
-#define TELEMETRY
+#define TELEMETRY 1
 
 //Uncomment to invert the polarity of the telemetry serial signal.
 //For ER9X and ERSKY9X it must be commented. For OpenTX it must be uncommented.
@@ -116,13 +116,13 @@
 //#define MULTI_TELEMETRY
 
 //Comment a line to disable a protocol telemetry
-#define DSM_TELEMETRY				// Forward received telemetry packet directly to TX to be decoded
-#define SPORT_TELEMETRY				// Use FrSkyX SPORT format to send telemetry to TX
-#define AFHDS2A_FW_TELEMETRY		// Forward received telemetry packet directly to TX to be decoded
-#define HUB_TELEMETRY				// Use FrSkyD Hub format to send telemetry to TX
-#define AFHDS2A_HUB_TELEMETRY		// Use FrSkyD Hub format to send telemetry to TX
-#define BAYANG_HUB_TELEMETRY		// Use FrSkyD Hub format to send telemetry to TX
-#define HUBSAN_HUB_TELEMETRY		// Use FrSkyD Hub format to send telemetry to TX
+#define DSM_TELEMETRY 1			// Forward received telemetry packet directly to TX to be decoded
+#define SPORT_TELEMETRY	1			// Use FrSkyX SPORT format to send telemetry to TX
+#define AFHDS2A_FW_TELEMETRY 1		// Forward received telemetry packet directly to TX to be decoded
+#define HUB_TELEMETRY 1				// Use FrSkyD Hub format to send telemetry to TX
+#define AFHDS2A_HUB_TELEMETRY 1		// Use FrSkyD Hub format to send telemetry to TX
+#define BAYANG_HUB_TELEMETRY 1		// Use FrSkyD Hub format to send telemetry to TX
+#define HUBSAN_HUB_TELEMETRY 1		// Use FrSkyD Hub format to send telemetry to TX
 
 /****************************/
 /*** SERIAL MODE SETTINGS ***/
@@ -132,7 +132,7 @@
 //This is available natively for ER9X and ERSKY9X. It is available for OpenTX on Taranis with a special version.
 
 //If you do not plan to use the Serial mode comment this line using "//" to save Flash space
-#define ENABLE_SERIAL
+#define ENABLE_SERIAL 1
 
 
 /*************************/
