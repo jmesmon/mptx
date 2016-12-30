@@ -16,6 +16,9 @@
 
 #if defined(ESKY_NRF24L01_INO)
 
+#include "ESky_nrf24l01.hh"
+#include "NRF24l01_SPI.hh"
+#include "Multiprotocol.h"
 #include "iface_nrf24l01.h"
 
 #define ESKY_BIND_COUNT		1000

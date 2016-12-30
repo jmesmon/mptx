@@ -15,6 +15,11 @@
 // Last sync with hexfet new_protocols/flysky_a7105.c dated 2015-09-28
 
 #ifdef AFHDS2A_A7105_INO
+#include "AFHDS2A_a7105.hh"
+#include "Pins.h"
+#include "A7105_SPI.hh"
+#include "iface_a7105.h"
+#include "Telemetry.hh"
 
 #define AFHDS2A_TXPACKET_SIZE	38
 #define AFHDS2A_RXPACKET_SIZE	37

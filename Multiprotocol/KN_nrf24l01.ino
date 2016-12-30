@@ -16,6 +16,10 @@
 
 #if defined(KN_NRF24L01_INO)
 
+#include "KN_nrf24l01.hh"
+#include "NRF24l01_SPI.hh"
+#include "Common.hh"
+#include "TX_Def.h"
 #include "iface_nrf24l01.h"
 
 // Wait for RX chip stable - 10ms

@@ -15,7 +15,11 @@
 
 #if defined(SHENQI_NRF24L01_INO)
 
+#include "SHENQI_nrf24l01.hh"
+#include "NRF24l01_SPI.hh"
+#include "TX_Def.h"
 #include "iface_nrf24l01.h"
+#include "Common.hh"
 
 const uint8_t PROGMEM SHENQI_Freq[] = {
 			50,50,20,60,30,40,
@@ -29,7 +33,7 @@ const uint8_t PROGMEM SHENQI_Freq[] = {
 			10,60,10,50,30,40,
 			20,10,40,30,60,20 };
 
-void SHENQI_init()
+static void SHENQI_init(void)
 {
     NRF24L01_Initialize();
     NRF24L01_WriteReg(NRF24L01_07_STATUS, 0x70);		// Clear data ready, data sent, and retransmit
@@ -45,7 +49,7 @@ void SHENQI_init()
 	LT8900_SetTxRxMode(RX_EN);
 }
 
-void SHENQI_send_packet()
+static void SHENQI_send_packet(void)
 {
 	packet[0]=0x00;
 	if(packet_count==0)
@@ -110,7 +114,7 @@ uint16_t SHENQI_callback()
     return packet_period;
 }
 
-uint16_t initSHENQI()
+uint16_t initSHENQI(void)
 {
 	BIND_IN_PROGRESS;	// autobind protocol
 	SHENQI_init();

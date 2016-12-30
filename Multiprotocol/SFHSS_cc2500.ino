@@ -16,6 +16,9 @@
 
 #if defined(SFHSS_CC2500_INO)
 
+#include "SFHSS_cc2500.hh"
+#include "CC2500_SPI.hh"
+#include "Common.hh"
 #include "iface_cc2500.h"
 
 #define SFHSS_COARSE	0

@@ -15,6 +15,9 @@
 
 #if defined(J6PRO_CYRF6936_INO)
 
+#include "J6Pro_cyrf6936.hh"
+#include "CYRF6936_SPI.hh"
+#include "Common.hh"
 #include "iface_cyrf6936.h"
 
 enum PktState {

@@ -17,6 +17,11 @@
 
 #if defined(HUBSAN_A7105_INO)
 
+#include "Hubsan_a7105.hh"
+#include "A7105_SPI.hh"
+#include "TX_Def.h"
+#include "Common.hh"
+#include "Telemetry.hh"
 #include "iface_a7105.h"
 
 enum{

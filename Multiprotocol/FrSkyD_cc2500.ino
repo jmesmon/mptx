@@ -15,6 +15,10 @@
 
 #if defined(FRSKYD_CC2500_INO)
 
+#include "FrSkyD_cc2500.hh"
+#include "CC2500_SPI.hh"
+#include "Common.hh"
+#include "Telemetry.hh"
 #include "iface_cc2500.h"
 
 static void __attribute__((unused)) frsky2way_init(uint8_t bind)

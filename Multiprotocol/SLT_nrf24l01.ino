@@ -16,6 +16,10 @@
 
 #if defined(SLT_NRF24L01_INO)
 
+#include "SLT_nrf24l01.hh"
+#include "NRF24l01_SPI.hh"
+#include "TX_Def.h"
+#include "Common.hh"
 #include "iface_nrf24l01.h"
 
 // For code readability

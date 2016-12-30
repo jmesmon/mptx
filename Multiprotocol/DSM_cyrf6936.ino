@@ -15,6 +15,10 @@
 
 #if defined(DSM_CYRF6936_INO)
 
+#include "DSM_cyrf6936.hh"
+#include "Telemetry.hh"
+#include "Multiprotocol.h"
+#include "CYRF6936_SPI.hh"
 #include "iface_cyrf6936.h"
 
 #define DSM_BIND_CHANNEL 0x0d //13 This can be any odd channel
@@ -41,10 +45,10 @@ enum {
 };
 
 //
-uint8_t sop_col;
-uint8_t DSM_num_ch=0;
-uint8_t ch_map[14];
-const uint8_t PROGMEM ch_map_progmem[][14] = {
+static uint8_t sop_col;
+static uint8_t DSM_num_ch=0;
+static uint8_t ch_map[14];
+static const uint8_t PROGMEM ch_map_progmem[][14] = {
 //22+11ms for 4..7 channels
 	{1, 0, 2, 3, 0xff, 0xff, 0xff, 1,    0,    2,    3, 0xff, 0xff,    0xff}, //4ch  - Guess
 	{1, 0, 2, 3, 4,    0xff, 0xff, 1,    0,    2,    3,    4, 0xff,    0xff}, //5ch  - Guess
@@ -62,7 +66,7 @@ const uint8_t PROGMEM ch_map_progmem[][14] = {
 	{1, 5, 2, 3, 4,    8,    9,    1,    5,    2,    3,     0,   7,    6   }, //10ch - DX18
 };
 
-const uint8_t PROGMEM pncodes[5][8][8] = {
+static const uint8_t PROGMEM pncodes[5][8][8] = {
 	/* Note these are in order transmitted (LSB 1st) */
 	{ /* Row 0 */
 		/* Col 0 */ {0x03, 0xBC, 0x6E, 0x8A, 0xEF, 0xBD, 0xFE, 0xF8},
@@ -123,18 +127,18 @@ const uint8_t PROGMEM pncodes[5][8][8] = {
 	},
 };
 
-static void __attribute__((unused)) read_code(uint8_t *buf, uint8_t row, uint8_t col, uint8_t len)
+static void read_code(uint8_t *buf, uint8_t row, uint8_t col, uint8_t len)
 {
 	for(uint8_t i=0;i<len;i++)
 		buf[i]=pgm_read_byte_near( &pncodes[row][col][i] );
 }
 
-static uint8_t __attribute__((unused)) get_pn_row(uint8_t channel)
+static uint8_t get_pn_row(uint8_t channel)
 {
-	return ((sub_protocol == DSMX_11 || sub_protocol == DSMX_22 )? (channel - 2) % 5 : channel % 5);	
+	return ((sub_protocol == DSMX_11 || sub_protocol == DSMX_22 )? (channel - 2) % 5 : channel % 5);
 }
 
-const uint8_t PROGMEM init_vals[][2] = {
+static const uint8_t PROGMEM init_vals[][2] = {
 	{CYRF_02_TX_CTRL, 0x00},				// All TX interrupt disabled
 	{CYRF_05_RX_CTRL, 0x00},				// All RX interrupt disabled
 	{CYRF_28_CLK_EN, 0x02},					// Force receive clock enable
@@ -154,7 +158,7 @@ const uint8_t PROGMEM init_vals[][2] = {
 	{CYRF_1E_RX_OVERRIDE, 0x14},			// Disable RX CRC, Force receive data rate, use RX synthesizer
 };
 
-const uint8_t PROGMEM data_vals[][2] = {
+static const uint8_t PROGMEM data_vals[][2] = {
 	{CYRF_29_RX_ABORT, 0x20},				// Abort RX operation in case we are coming from bind
 	{CYRF_0F_XACT_CFG, 0x24},				// Force Idle
 	{CYRF_29_RX_ABORT, 0x00},				// Clear abort RX
@@ -164,15 +168,15 @@ const uint8_t PROGMEM data_vals[][2] = {
 	{CYRF_1E_RX_OVERRIDE, 0x00},			// CRC16 enabled, no ACK
 };
 
-static void __attribute__((unused)) cyrf_config()
+static void cyrf_config(void)
 {
-	for(uint8_t i = 0; i < sizeof(init_vals) / 2; i++)	
+	for(uint8_t i = 0; i < sizeof(init_vals) / 2; i++)
 		CYRF_WriteRegister(pgm_read_byte_near(&init_vals[i][0]), pgm_read_byte_near(&init_vals[i][1]));
 	CYRF_WritePreamble(0x333304);
 	CYRF_ConfigRFChannel(0x61);
 }
 
-static void __attribute__((unused)) build_bind_packet()
+static void build_bind_packet(void)
 {
 	uint8_t i;
 	uint16_t sum = 384 - 0x10;//
@@ -203,7 +207,7 @@ static void __attribute__((unused)) build_bind_packet()
 		#endif
 	if(sub_protocol==DSMX_11 || sub_protocol==DSM_AUTO) // Force DSMX/1024 in mode Auto
 		packet[12]=0xb2;					// DSMX/1024 2 packets
-	
+
 	packet[13] = 0x00; //???
 	for(i = 8; i < 14; i++)
 		sum += packet[i];
@@ -211,7 +215,7 @@ static void __attribute__((unused)) build_bind_packet()
 	packet[15] = sum & 0xff;
 }
 
-static void __attribute__((unused)) initialize_bind_phase()
+static void initialize_bind_phase(void)
 {
 	CYRF_ConfigRFChannel(DSM_BIND_CHANNEL); //This seems to be random?
 	//64 SDR Mode is configured so only the 8 first values are needed but need to write 16 values...
@@ -219,13 +223,13 @@ static void __attribute__((unused)) initialize_bind_phase()
 	build_bind_packet();
 }
 
-static void __attribute__((unused)) cyrf_configdata()
+static void cyrf_configdata(void)
 {
 	for(uint8_t i = 0; i < sizeof(data_vals) / 2; i++)
 		CYRF_WriteRegister(pgm_read_byte_near(&data_vals[i][0]), pgm_read_byte_near(&data_vals[i][1]));
 }
 
-static void __attribute__((unused)) update_channels()
+static void update_channels(void)
 {
 	prev_option=option;
 	if(sub_protocol==DSM_AUTO)
@@ -243,7 +247,7 @@ static void __attribute__((unused)) update_channels()
 		ch_map[i]=pgm_read_byte_near(&ch_map_progmem[idx][i]);
 }
 
-static void __attribute__((unused)) build_data_packet(uint8_t upper)
+static void build_data_packet(uint8_t upper)
 {
 	uint16_t max = 2047;
 	uint8_t bits = 11;
@@ -288,7 +292,7 @@ static void __attribute__((unused)) build_data_packet(uint8_t upper)
 	}
 }
 
-static void __attribute__((unused)) set_sop_data_crc()
+static void set_sop_data_crc(void)
 {
 	//The crc for channel '1' is NOT(mfgid[0] << 8 + mfgid[1])
 	//The crc for channel '2' is (mfgid[0] << 8 + mfgid[1])
@@ -314,7 +318,7 @@ static void __attribute__((unused)) set_sop_data_crc()
 		hopping_frequency_no %=2;
 }
 
-static void __attribute__((unused)) calc_dsmx_channel()
+static void calc_dsmx_channel(void)
 {
 	uint8_t idx = 0;
 	uint32_t id = ~(((uint32_t)cyrfmfg_id[0] << 24) | ((uint32_t)cyrfmfg_id[1] << 16) | ((uint32_t)cyrfmfg_id[2] << 8) | (cyrfmfg_id[3] << 0));
@@ -348,7 +352,7 @@ static void __attribute__((unused)) calc_dsmx_channel()
 	}
 }
 
-static uint8_t __attribute__((unused)) DSM_Check_RX_packet()
+static uint8_t DSM_Check_RX_packet(void)
 {
 	uint8_t result=1;						// assume good packet
 	
@@ -365,7 +369,7 @@ static uint8_t __attribute__((unused)) DSM_Check_RX_packet()
 	return result;
 }
 
-uint16_t ReadDsm()
+uint16_t ReadDsm(void)
 {
 #define DSM_CH1_CH2_DELAY	4010			// Time between write of channel 1 and channel 2
 #define DSM_WRITE_DELAY		1950			// Time after write to verify write complete
@@ -533,7 +537,7 @@ uint16_t ReadDsm()
 	return 0;		
 }
 
-uint16_t initDsm()
+uint16_t initDsm(void)
 { 
 	CYRF_GetMfgData(cyrfmfg_id);
 	//Model match

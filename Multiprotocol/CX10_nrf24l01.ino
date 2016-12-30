@@ -17,7 +17,11 @@
 
 #if defined(CX10_NRF24L01_INO)
 
+#include "CX10_nrf24l01.hh"
+#include "NRF24l01_SPI.hh"
+#include "TX_Def.h"
 #include "iface_nrf24l01.h"
+#include "Common.hh"
 
 #define CX10_BIND_COUNT		4360   // 6 seconds
 #define CX10_PACKET_SIZE	15

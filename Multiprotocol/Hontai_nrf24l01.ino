@@ -15,6 +15,10 @@
 
 #if defined(HONTAI_NRF24L01_INO)
 
+#include "Hontai_nrf24l01.hh"
+#include "NRF24l01_SPI.hh"
+#include "TX_Def.h"
+#include "Common.hh"
 #include "iface_nrf24l01.h"
 
 #define HONTAI_BIND_COUNT 80

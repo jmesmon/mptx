@@ -14,6 +14,10 @@
  */
 
 #if defined(FRSKYV_CC2500_INO)
+#include "FrSkyV_cc2500.hh"
+#include "Multiprotocol.h"
+#include "CC2500_SPI.hh"
+#include "Common.hh"
 
 #define FRSKYV_BIND_COUNT 200
 

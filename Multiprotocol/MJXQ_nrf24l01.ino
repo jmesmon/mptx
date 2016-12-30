@@ -17,6 +17,10 @@
 
 #if defined(MJXQ_NRF24L01_INO)
 
+#include "MJXQ_nrf24l01.hh"
+#include "NRF24l01_SPI.hh"
+#include "TX_Def.h"
+#include "Common.hh"
 #include "iface_nrf24l01.h"
 
 #define MJXQ_BIND_COUNT		150

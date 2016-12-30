@@ -17,6 +17,10 @@
 
 #if defined(MT99XX_NRF24L01_INO)
 
+#include "MT99xx_nrf24l01.hh"
+#include "NRF24l01_SPI.hh"
+#include "TX_Def.h"
+#include "Common.hh"
 #include "iface_nrf24l01.h"
 
 #define MT99XX_BIND_COUNT		928

@@ -15,7 +15,10 @@
 
 #if defined(ASSAN_NRF24L01_INO)
 
+#include "ASSAN_nrf24l01.hh"
 #include "iface_nrf24l01.h"
+#include "NRF24l01_SPI.hh"
+#include "Arduino.hh"
 
 #define ASSAN_PACKET_SIZE		20
 #define ASSAN_RF_BIND_CHANNEL	0x03
@@ -33,7 +36,7 @@ enum {
     ASSAN_DATA5
 };
 
-void ASSAN_init()
+static void ASSAN_init(void)
 {
     NRF24L01_Initialize();
     NRF24L01_WriteReg(NRF24L01_03_SETUP_AW, 0x02);			// 4 bytes rx/tx address
@@ -48,7 +51,7 @@ void ASSAN_init()
     NRF24L01_SetPower();
 }
 
-void ASSAN_send_packet()
+static void ASSAN_send_packet(void)
 {
 	uint16_t temp;
 	for(uint8_t i=0;i<8;i++)

@@ -16,7 +16,11 @@
 
 #if defined(FQ777_NRF24L01_INO)
 
+#include "FQ777_nrf24l01.hh"
+#include "TX_Def.h"
+#include "NRF24l01_SPI.hh"
 #include "iface_nrf24l01.h"
+#include "Common.hh"
 
 #define FQ777_INITIAL_WAIT		500
 #define FQ777_PACKET_PERIOD		2000

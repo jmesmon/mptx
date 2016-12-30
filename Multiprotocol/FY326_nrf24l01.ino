@@ -16,7 +16,11 @@
 
 #if defined(FY326_NRF24L01_INO)
 
+#include "FY326_nrf24l01.hh"
+#include "NRF24l01_SPI.hh"
+#include "TX_Def.h"
 #include "iface_nrf24l01.h"
+#include "Common.hh"
 
 #define FY326_INITIAL_WAIT		500
 #define FY326_PACKET_PERIOD		1500

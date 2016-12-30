@@ -16,8 +16,12 @@ Multiprotocol is distributed in the hope that it will be useful,
 // Last sync with hexfet new_protocols/bayang_nrf24l01.c dated 2015-12-22
 
 #if defined(BAYANG_NRF24L01_INO)
-
+#include "Bayang_nrf24l01.hh"
+#include "Common.hh"
 #include "iface_nrf24l01.h"
+#include "NRF24l01_SPI.hh"
+#include "TX_Def.h"
+#include "Telemetry.hh"
 
 #define BAYANG_BIND_COUNT		1000
 #define BAYANG_PACKET_PERIOD	1000

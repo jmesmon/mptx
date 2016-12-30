@@ -13,9 +13,13 @@
  along with Multiprotocol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if defined(DEVO_CYRF6936_INO) 
- 
+#if defined(DEVO_CYRF6936_INO)
+
+#include "Devo_cyrf6936.hh"
+#include "Multiprotocol.h"
+#include "Pins.h"
 #include "iface_cyrf6936.h"
+#include "CYRF6936_SPI.hh"
 
 #define DEVO_NUM_CHANNELS 8
 

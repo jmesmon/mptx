@@ -18,13 +18,16 @@
 
 #if defined(FRSKYX_CC2500_INO)
 
+#include "FrSkyX_cc2500.hh"
+#include "Multiprotocol.h"
+#include "CC2500_SPI.hh"
+#include "Telemetry.hh"
+#include "Common.hh"
 #include "iface_cc2500.h"
 
 uint8_t chanskip;
 uint8_t counter_rst;
 uint8_t ctr;
-uint8_t seq_last_sent;
-uint8_t seq_last_rcvd;
 
 static void __attribute__((unused)) set_start(uint8_t ch )
 {
