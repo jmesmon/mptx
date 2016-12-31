@@ -5,6 +5,7 @@ void TelemetryUpdate(void);
 void init_hub_telemetry(void);
 void frsky_check_telemetry(uint8_t *pkt,uint8_t len);
 void telemetry_reset(void);
+void PPM_Telemetry_serial_init(void);
 
 #if defined SPORT_TELEMETRY && defined FRSKYX_CC2500_INO
 extern uint8_t seq_last_sent;

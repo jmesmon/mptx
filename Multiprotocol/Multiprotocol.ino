@@ -985,27 +985,6 @@ void Mprotocol_serial_init()
 	#endif //ORANGE_TX
 }
 
-#if defined(TELEMETRY)
-void PPM_Telemetry_serial_init()
-{
-	#ifdef MULTI_TELEMETRY
-		Mprotocol_serial_init();
-		#ifndef ORANGE_TX
-			#ifndef STM32_BOARD
-				UCSR0B &= ~(_BV(RXEN0)|_BV(RXCIE0));//rx disable and interrupt
-			#endif
-		#endif
-	#else
-		if( (protocol==MODE_FRSKYD) || (protocol==MODE_HUBSAN) || (protocol==MODE_AFHDS2A) || (protocol==MODE_BAYANG) )
-			initTXSerial( SPEED_9600 ) ;
-		if(protocol==MODE_FRSKYX)
-			initTXSerial( SPEED_57600 ) ;
-		if(protocol==MODE_DSM)
-			initTXSerial( SPEED_125K ) ;
-	#endif
-}
-#endif
-
 // Convert 32b id to rx_tx_addr
 static void set_rx_tx_addr(uint32_t id)
 { // Used by almost all protocols
