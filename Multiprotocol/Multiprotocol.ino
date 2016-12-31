@@ -25,6 +25,7 @@
 #include "Multiprotocol.h"
 #include "Telemetry.hh"
 #include "Arduino.hh"
+#include <mptx/random.h>
 
 #include "A7105_SPI.hh"
 #include "AFHDS2A_a7105.hh"
@@ -141,11 +142,6 @@ uint8_t protocol_flags=0,protocol_flags2=0;
 // PPM variable
 volatile uint16_t PPM_data[NUM_CHN];
 
-#ifndef ORANGE_TX
-//Random variable
-volatile uint32_t gWDT_entropy=0;
-#endif
-
 //Serial protocol
 uint8_t sub_protocol;
 uint8_t protocol;
@@ -167,23 +163,6 @@ uint8_t pkt[MAX_PKT];//telemetry receiving packets
 // Callback
 typedef uint16_t (*void_function_t) (void);//pointer to a function with no parameters which return an uint16_t integer
 void_function_t remote_callback = 0;
-
-#if ! defined (ORANGE_TX) && ! defined (STM32_BOARD)
-static void random_init(void)
-{
-	cli();					// Temporarily turn off interrupts, until WDT configured
-	MCUSR = 0;				// Use the MCU status register to reset flags for WDR, BOR, EXTR, and POWR
-	WDTCSR |= _BV(WDCE);	// WDT control register, This sets the Watchdog Change Enable (WDCE) flag, which is  needed to set the prescaler
-	WDTCSR = _BV(WDIE);		// Watchdog interrupt enable (WDIE)
-	sei();					// Turn interupts on
-}
-
-static uint32_t random_value(void)
-{
-	while (!gWDT_entropy);
-	return gWDT_entropy;
-}
-#endif
 
 static void protocol_init();
 static void update_led_status(void);
@@ -303,7 +282,7 @@ void setup()
 		// Timer1 config
 		TCCR1A = 0;
 		TCCR1B = (1 << CS11);	//prescaler8, set timer1 to increment every 0.5us(16Mhz) and start timer
-		
+
 		// Random
 		random_init();
 	#endif
@@ -365,14 +344,9 @@ void setup()
 	//Init RF modules
 	modules_reset();
 
-#ifndef ORANGE_TX
 	//Init the seed with a random value created from watchdog timer for all protocols requiring random values
-	#ifdef STM32_BOARD
-		randomSeed((uint32_t)analogRead(PB0) << 10 | analogRead(PB1));			
-	#else
-		randomSeed(random_value());
-	#endif
-#endif
+	// FIXME: even if random_value() is unimplimented, we're still seeding here. Consider folding this into board_init
+	randomSeed(random_value());
 
 	// Read or create protocol id
 	MProtocol_id_master=random_id(10,false);
@@ -432,7 +406,7 @@ void setup()
 // Main
 // Protocol scheduler
 void loop()
-{ 
+{
 	uint16_t next_callback,diff=0xFFFF;
 
 	while(1)
@@ -612,7 +586,7 @@ static void update_led_status(void)
 }
 
 #ifdef STM32_BOARD	
-void start_timer2()
+static void start_timer2(void)
 {	
 	// Pause the timer while we're configuring it
 	timer.pause();
@@ -627,7 +601,7 @@ void start_timer2()
 #endif
 
 // Protocol start
-static void protocol_init()
+static void protocol_init(void)
 {
 	uint16_t next_callback=0;		// Default is immediate call back
 	remote_callback = 0;
@@ -1167,30 +1141,3 @@ static uint32_t random_id(uint16_t adress, uint8_t create_new)
 		tx_resume();
 	}
 #endif //ENABLE_SERIAL
-
-#if ! defined (ORANGE_TX) && ! defined (STM32_BOARD)
-	// Random interrupt service routine called every time the WDT interrupt is triggered.
-	// It is only enabled at startup to generate a seed.
-	ISR(WDT_vect)
-	{
-		static uint8_t gWDT_buffer_position=0;
-		#define gWDT_buffer_SIZE 32
-		static uint8_t gWDT_buffer[gWDT_buffer_SIZE];
-		gWDT_buffer[gWDT_buffer_position] = TCNT1L; // Record the Timer 1 low byte (only one needed) 
-		gWDT_buffer_position++;                     // every time the WDT interrupt is triggered
-		if (gWDT_buffer_position >= gWDT_buffer_SIZE)
-		{
-			// The following code is an implementation of Jenkin's one at a time hash
-			for(uint8_t gWDT_loop_counter = 0; gWDT_loop_counter < gWDT_buffer_SIZE; ++gWDT_loop_counter)
-			{
-				gWDT_entropy += gWDT_buffer[gWDT_loop_counter];
-				gWDT_entropy += (gWDT_entropy << 10);
-				gWDT_entropy ^= (gWDT_entropy >> 6);
-			}
-			gWDT_entropy += (gWDT_entropy << 3);
-			gWDT_entropy ^= (gWDT_entropy >> 11);
-			gWDT_entropy += (gWDT_entropy << 15);
-			WDTCSR = 0;	// Disable Watchdog interrupt
-		}
-	}
-#endif

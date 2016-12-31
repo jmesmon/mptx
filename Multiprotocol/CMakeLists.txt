@@ -109,6 +109,8 @@ function(add_arduino_exe _exe)
 	target_include_directories("${_exe}" PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR})
 	target_include_directories("${_exe}" PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/include)
+	target_include_directories("${_exe}" PRIVATE
 		${ARDUINO_SDK}/hardware/arduino/avr/cores/arduino)
 	target_include_directories("${_exe}" PRIVATE
 		${ARDUINO_SDK}/hardware/arduino/avr/variants/eightanaloginputs)
@@ -129,4 +131,5 @@ add_arduino_exe(multi
 	Multiprotocol.ino NRF24l01_SPI.ino  SFHSS_cc2500.ino
 	SHENQI_nrf24l01.ino SLT_nrf24l01.ino SPI.ino Symax_nrf24l01.ino
 	Telemetry.ino V2X2_nrf24l01.ino YD717_nrf24l01.ino
+	board/atmega328p/random.c
 )
