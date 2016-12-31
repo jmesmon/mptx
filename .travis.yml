@@ -1,14 +1,18 @@
 language: c
+cache:
+        ccache: true
+        directories:
+                - dl
 addons:
         apt:
                 packages:
-                        - avr-gcc
+                        - gcc-avr
                         - cmake
                         - ninja-build
+                        - ccache
 script:
         - mkdir build
         - cd build
         - cmake -GNinja ..
         - ninja -v
-
 
