@@ -48,7 +48,7 @@ enum {
 	DEVO_BOUND_10,
 };
 
-static void __attribute__((unused)) DEVO_scramble_pkt()
+static void DEVO_scramble_pkt(void)
 {
 #ifdef NO_SCRAMBLE
 	return;
@@ -58,7 +58,7 @@ static void __attribute__((unused)) DEVO_scramble_pkt()
 #endif
 }
 
-static void __attribute__((unused)) DEVO_add_pkt_suffix()
+static void DEVO_add_pkt_suffix()
 {
     uint8_t bind_state;
 	#ifdef ENABLE_PPM
@@ -96,7 +96,7 @@ static void __attribute__((unused)) DEVO_add_pkt_suffix()
 	packet[15] = (MProtocol_id >> 16) & 0xff;
 }
 
-static void __attribute__((unused)) DEVO_build_beacon_pkt(uint8_t upper)
+static void DEVO_build_beacon_pkt(uint8_t upper)
 {
 	packet[0] = (DEVO_NUM_CHANNELS << 4) | 0x07;
 	uint8_t max = 8;
@@ -111,7 +111,7 @@ static void __attribute__((unused)) DEVO_build_beacon_pkt(uint8_t upper)
 	DEVO_add_pkt_suffix();
 }
 
-static void __attribute__((unused)) DEVO_build_bind_pkt()
+static void DEVO_build_bind_pkt()
 {
 	packet[0] = (DEVO_NUM_CHANNELS << 4) | 0x0a;
 	packet[1] = bind_counter & 0xff;
@@ -131,7 +131,7 @@ static void __attribute__((unused)) DEVO_build_bind_pkt()
 	packet[15] ^= cyrfmfg_id[2];
 }
 
-static void __attribute__((unused)) DEVO_build_data_pkt()
+static void DEVO_build_data_pkt()
 {
 	static uint8_t ch_idx=0;
 
@@ -155,7 +155,7 @@ static void __attribute__((unused)) DEVO_build_data_pkt()
 	DEVO_add_pkt_suffix();
 }
 
-static void __attribute__((unused)) DEVO_cyrf_set_bound_sop_code()
+static void DEVO_cyrf_set_bound_sop_code()
 {
 	/* crc == 0 isn't allowed, so use 1 if the math results in 0 */
 	uint8_t crc = (cyrfmfg_id[0] + (cyrfmfg_id[1] >> 6) + cyrfmfg_id[2]);
@@ -190,21 +190,21 @@ const uint8_t PROGMEM DEVO_init_vals[][2] = {
 	{ CYRF_0F_XACT_CFG, 0x28 }
 };
 
-static void __attribute__((unused)) DEVO_cyrf_init()
+static void DEVO_cyrf_init(void)
 {
 	/* Initialise CYRF chip */
 	for(uint8_t i = 0; i < sizeof(DEVO_init_vals) / 2; i++)	
 		CYRF_WriteRegister(pgm_read_byte( &DEVO_init_vals[i][0]), pgm_read_byte( &DEVO_init_vals[i][1]) );
 }
 
-static void __attribute__((unused)) DEVO_set_radio_channels()
+static void DEVO_set_radio_channels(void)
 {
 	CYRF_FindBestChannels(hopping_frequency, 3, 4, 4, 80);
 	hopping_frequency[3] = hopping_frequency[0];
 	hopping_frequency[4] = hopping_frequency[1];
 }
 
-static void __attribute__((unused)) DEVO_BuildPacket()
+static void DEVO_BuildPacket(void)
 {
 	static uint8_t failsafe_pkt=0;
 	switch(phase)
