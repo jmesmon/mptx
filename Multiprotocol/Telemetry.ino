@@ -635,10 +635,10 @@ static void telem_update_sport(void)
 	if (protocol==MODE_FRSKYX)
 	{	// FrSkyX
 		if(telemetry_link)
-		{		
+		{
 			if(pktt[4] & 0x80)
 				rssi=pktt[4] & 0x7F ;
-			else 
+			else
 				RxBt = (pktt[4]<<1) + 1 ;
 			if(pktt[6]<=6)
 				for (uint8_t i=0; i < pktt[6]; i++)
@@ -661,6 +661,21 @@ static void telem_update_sport(void)
 static inline void telem_update_sport(void) {}
 #endif
 
+#ifdef DSM_TELEMETRY
+static bool telem_update_dsm(void)
+{
+	if(telemetry_link && protocol == MODE_DSM )
+	{	// DSM
+		DSM_frame();
+		telemetry_link=0;
+		return true;
+	}
+
+	return false;
+}
+#else
+static inline bool telem_update_dsm(void) { return false; }
+#endif
 
 void TelemetryUpdate()
 {
@@ -672,14 +687,9 @@ void TelemetryUpdate()
 
 	telem_update_sport();
 
-	#if defined DSM_TELEMETRY
-		if(telemetry_link && protocol == MODE_DSM )
-		{	// DSM
-			DSM_frame();
-			telemetry_link=0;
-			return;
-		}
-	#endif
+	if (telem_update_dsm())
+		return;
+
     #if defined AFHDS2A_FW_TELEMETRY     
         if(telemetry_link == 2 && protocol == MODE_AFHDS2A)
 		{
