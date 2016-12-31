@@ -612,21 +612,30 @@ static bool tx_buff_has_space(void)
 	return true;
 }
 
+#ifdef MULTI_TELEMETRY
+/* return value is "should skip remaining telemetry updates" */
+static bool telem_update_multi(void)
+{
+	uint32_t now = millis();
+	if ((now - lastMulti) > MULTI_TIME) {
+		multi_send_status();
+		lastMulti = now;
+		return true;
+	}
+
+	return false;
+}
+#else
+static inline bool telem_update_multi(void) { return false; }
+#endif
+
 void TelemetryUpdate()
 {
 	if (!tx_buff_has_space())
 		return;
 
-    #if defined MULTI_TELEMETRY
-        {
-            uint32_t now = millis();
-            if ((now - lastMulti) > MULTI_TIME) {
-                multi_send_status();
-                lastMulti = now;
-                return;
-            }
-        }
-	#endif
+	if (telem_update_multi())
+		return;
 
 	#if defined SPORT_TELEMETRY
 		if (protocol==MODE_FRSKYX)
