@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.2)
 project(mptx C CXX ASM)
 
 set(CMAKE_USE_RELATIVE_PATHS TRUE)
