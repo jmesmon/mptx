@@ -103,7 +103,6 @@ function(add_arduino_exe _exe)
 	#)
 	#add_executable(${_exe}-combine.elf ${CMAKE_CURRENT_BINARY_DIR}/combined.cc)
 	#target_include_directories(${_exe}-combine.elf PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-	message("Got src: ${_src}")
 	set_target_properties("${_exe}" PROPERTIES SUFFIX ".elf")
 	target_include_directories("${_exe}" PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR})
