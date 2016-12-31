@@ -21,6 +21,7 @@
 #include "TX_Def.h"
 #include "Common.hh"
 #include "iface_nrf24l01.h"
+#include "Arduino.hh"
 
 #define HISKY_BIND_COUNT 1000
 #define HISKY_TXID_SIZE 5

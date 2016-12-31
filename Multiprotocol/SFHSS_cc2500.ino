@@ -20,6 +20,7 @@
 #include "CC2500_SPI.hh"
 #include "Common.hh"
 #include "iface_cc2500.h"
+#include "Arduino.hh"
 
 #define SFHSS_COARSE	0
 

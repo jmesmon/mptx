@@ -22,6 +22,7 @@
 #include "TX_Def.h"
 #include "iface_nrf24l01.h"
 #include "Common.hh"
+#include "Arduino.hh"
 
 #define CX10_BIND_COUNT		4360   // 6 seconds
 #define CX10_PACKET_SIZE	15

@@ -21,6 +21,7 @@
 #include "TX_Def.h"
 #include "Common.hh"
 #include "iface_nrf24l01.h"
+#include "Arduino.hh"
 
 // For code readability
 #define SLT_PAYLOADSIZE 7

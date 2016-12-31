@@ -20,6 +20,7 @@
 #include "Multiprotocol.h"
 #include "CYRF6936_SPI.hh"
 #include "iface_cyrf6936.h"
+#include "Arduino.hh"
 
 #define DSM_BIND_CHANNEL 0x0d //13 This can be any odd channel
 

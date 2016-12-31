@@ -20,6 +20,7 @@
 #include "Pins.h"
 #include "iface_cyrf6936.h"
 #include "CYRF6936_SPI.hh"
+#include "Arduino.hh"
 
 #define DEVO_NUM_CHANNELS 8
 
