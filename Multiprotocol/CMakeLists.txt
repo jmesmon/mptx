@@ -40,10 +40,10 @@ set(ARDUINO_SDK "arduino")
 #	wiring_shift.c WInterrupts.c
 #	HardwareSerial.cpp WMath.cpp)
 set(ARDUINO_SRC
-	abi.cpp Print.h Arduino.h hooks.c Server.h wiring_analog.c binary.h
+	abi.cpp Arduino.h hooks.c wiring_analog.c binary.h
 	wiring_digital.c Client.h main.cpp wiring_private.h new.cpp
-	wiring_pulse.c wiring_pulse.S wiring_shift.c Printable.h
-	WMath.cpp
+	wiring_pulse.c wiring_pulse.S wiring_shift.c
+	WMath.cpp WCharacter.h WString.h
 )
 # Removed due to conflicts:
 # wiring.c
@@ -55,7 +55,7 @@ set(ARDUINO_SRC
 # USBCore.cpp CDC.cpp IPAddress.h IPAddress.cpp HardwareSerial3.cpp
 # PluggableUSB.h USBCore.h Udp.h HardwareSerial.cpp Stream.cpp Stream.h Tone.cpp
 # HardwareSerial.h HardwareSerial_private.h
-# USBDesc.h WString.cpp Print.cpp WCharacter.h WString.h
+# USBDesc.h WString.cpp Print.cpp Print.h Printable.h Server.h
 
 function(make_absolute _base _out)
 	set(_paths)
