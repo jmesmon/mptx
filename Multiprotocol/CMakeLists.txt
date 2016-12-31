@@ -92,7 +92,6 @@ function(add_arduino_exe _exe)
 	endforeach()
 
 	add_executable("${_exe}" ${_src}
-		${ARDUINO_SDK}/libraries/Servo/src/avr/Servo.cpp
 		${ARDUINO_SRC}
 		)
 	list(INSERT _src 0 arduino_prefix.cc)
@@ -114,8 +113,6 @@ function(add_arduino_exe _exe)
 		${ARDUINO_SDK}/hardware/arduino/avr/cores/arduino)
 	target_include_directories("${_exe}" PRIVATE
 		${ARDUINO_SDK}/hardware/arduino/avr/variants/eightanaloginputs)
-	target_include_directories("${_exe}" PRIVATE
-		${ARDUINO_SDK}/libraries/Servo/src/)
 	set_property(TARGET "${_exe}" APPEND PROPERTY LINK_FLAGS "-Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/${_exe}.map")
 endfunction()
 
