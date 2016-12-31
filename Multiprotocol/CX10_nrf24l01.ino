@@ -62,10 +62,10 @@ static void __attribute__((unused)) CX10_Write_Packet(uint8_t bind)
 	packet[3] = rx_tx_addr[2];
 	packet[4] = rx_tx_addr[3];
 	// packet[5] to [8] (aircraft id) is filled during bind for blue board
-	uint16_t aileron=map(limit_channel_100(AILERON),servo_min_100,servo_max_100,1000,2000);
-	uint16_t elevator=map(limit_channel_100(ELEVATOR),servo_min_100,servo_max_100,2000,1000);
-	uint16_t throttle=map(limit_channel_100(THROTTLE),servo_min_100,servo_max_100,1000,2000);
-	uint16_t rudder=map(limit_channel_100(RUDDER),servo_min_100,servo_max_100,2000,1000);
+	uint16_t aileron=convert_channel(AILERON,1000,2000);
+	uint16_t elevator=convert_channel(ELEVATOR,2000,1000);
+	uint16_t throttle=convert_channel(THROTTLE,1000,2000);
+	uint16_t rudder=convert_channel(RUDDER,2000,1000);
     // Channel 5 - flip flag
 	packet[12+offset] = GET_FLAG(Servo_AUX1,CX10_FLAG_FLIP); // flip flag applied on rudder
 

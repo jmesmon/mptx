@@ -8,3 +8,4 @@ uint16_t convert_channel_frsky(uint8_t num);
 void Frsky_init_hop(void);
 void convert_channel_HK310(uint8_t num, uint8_t *low, uint8_t *high);
 uint8_t convert_channel_s8b(uint8_t num);
+int16_t convert_channel(uint8_t num, int16_t min, int16_t max);

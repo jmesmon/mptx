@@ -15,19 +15,24 @@
 #include "Arduino.hh"
 #include "Common.hh"
 
+int16_t convert_channel(uint8_t num, int16_t min, int16_t max)
+{
+	return map(limit_channel_100(num), servo_min_100, servo_max_100, min, max);
+}
+
 /************************/
 /**  Convert routines  **/
 /************************/
 // Channel value is converted to 8bit values full scale
 uint8_t convert_channel_8b(uint8_t num)
 {
-	return (uint8_t) (map(limit_channel_100(num),servo_min_100,servo_max_100,0,255));	
+	return convert_channel(num, 0, 255);
 }
 
 // Channel value is converted to 8bit values to provided values scale
 uint8_t convert_channel_8b_scale(uint8_t num,uint8_t min,uint8_t max)
 {
-	return (uint8_t) (map(limit_channel_100(num),servo_min_100,servo_max_100,min,max));	
+	return convert_channel(num, min, max);
 }
 
 // Channel value is converted sign + magnitude 8bit values
@@ -35,13 +40,13 @@ uint8_t convert_channel_s8b(uint8_t num)
 {
 	uint8_t ch;
 	ch = convert_channel_8b(num);
-	return (ch < 128 ? 127-ch : ch);	
+	return (ch < 128 ? 127-ch : ch);
 }
 
 // Channel value is converted to 10bit values
 uint16_t convert_channel_10b(uint8_t num)
 {
-	return (uint16_t) (map(limit_channel_100(num),servo_min_100,servo_max_100,1,1023));
+	return convert_channel(num, 1, 1023);
 }
 
 // Channel value is multiplied by 1.5

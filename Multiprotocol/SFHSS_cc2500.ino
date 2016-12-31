@@ -128,9 +128,9 @@ static void __attribute__((unused)) SFHSS_calc_next_chan()
 
 // Channel values are 10-bit values between 86 and 906, 496 is the middle.
 // Values grow down and to the right, so we just revert every channel.
-static uint16_t __attribute__((unused)) SFHSS_convert_channel(uint8_t num)
+static uint16_t SFHSS_convert_channel(uint8_t num)
 {
-	return (uint16_t) (map(limit_channel_100(num),servo_min_100,servo_max_100,906,86));
+    return convert_channel(num, 906, 86);
 }
 
 static void __attribute__((unused)) SFHSS_build_data_packet()

@@ -111,7 +111,7 @@ static void __attribute__((unused)) SLT_send_data(uint8_t *data, uint8_t len)
 	packet_sent = 1;
 }
 
-static void __attribute__((unused)) SLT_build_packet()
+static void SLT_build_packet()
 {
 	// aileron, elevator, throttle, rudder, gear, pitch
 	uint8_t e = 0; // byte where extension 2 bits for every 10-bit channel are packed
@@ -119,7 +119,7 @@ static void __attribute__((unused)) SLT_build_packet()
 	{
 		uint16_t v = convert_channel_10b(CH_AETR[i]);
 		if(sub_protocol==VISTA && CH_AETR[i]==THROTTLE)
-			v = (uint16_t) map(limit_channel_100(THROTTLE),servo_min_100,servo_max_100,850,150);	// Throttel is between 850=0% and 150=100%
+			v = convert_channel(THROTTLE, 850, 150); // Throttel is between 850=0% and 150=100%
 		packet[i] = v;
 		e = (e >> 2) | (uint8_t) ((v >> 2) & 0xC0);
 	}
