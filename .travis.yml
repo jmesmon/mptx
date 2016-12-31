@@ -1,0 +1,14 @@
+language: c
+addons:
+        apt:
+                packages:
+                        - avr-gcc
+                        - cmake
+                        - ninja-build
+script:
+        - mkdir build
+        - cd build
+        - cmake -GNinja ..
+        - ninja -v
+
+
