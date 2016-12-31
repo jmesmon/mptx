@@ -19,3 +19,5 @@ script:
         - cmake -GNinja ../Multiprotocol
         - ninja -v
 
+after_success:
+        - avr-size --mcu=atmega328p -C multi.elf
