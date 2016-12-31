@@ -570,45 +570,53 @@ static void proces_sport_data(uint8_t data)
 
 #endif
 
+static bool tx_buff_has_space(void)
+{
+#ifdef BASH_SERIAL
+	uint8_t h ;
+	uint8_t t ;
+	h = SerialControl.head ;
+	t = SerialControl.tail ;
+	if ( h >= t )
+	{
+		t += 64 - h ;
+	}
+	else
+	{
+		t -= h ;
+	}
+	if ( t < 32 )
+	{
+		return false;
+	}
+
+#else
+	uint8_t h ;
+	uint8_t t ;
+	h = tx_head ;
+	t = tx_tail ;
+	if ( h >= t )
+	{
+		t += TXBUFFER_SIZE - h ;
+	}
+	else
+	{
+		t -= h ;
+	}
+	if ( t < 16 )
+	{
+		return false;
+	}
+#endif
+
+	return true;
+}
+
 void TelemetryUpdate()
 {
-	// check for space in tx buffer
-	#ifdef BASH_SERIAL
-		uint8_t h ;
-		uint8_t t ;
-		h = SerialControl.head ;
-		t = SerialControl.tail ;
-		if ( h >= t )
-		{
-			t += 64 - h ;
-		}
-		else
-		{
-			t -= h ;
-		}
-		if ( t < 32 )
-		{
-			return ;
-		}
+	if (!tx_buff_has_space())
+		return;
 
-	#else
-		uint8_t h ;
-		uint8_t t ;
-		h = tx_head ;
-		t = tx_tail ;
-		if ( h >= t )
-		{
-			t += TXBUFFER_SIZE - h ;
-		}
-		else
-		{
-			t -= h ;
-		}
-		if ( t < 16 )
-		{
-			return ;
-		}
-	#endif
     #if defined MULTI_TELEMETRY
         {
             uint32_t now = millis();
@@ -619,7 +627,7 @@ void TelemetryUpdate()
             }
         }
 	#endif
-	 
+
 	#if defined SPORT_TELEMETRY
 		if (protocol==MODE_FRSKYX)
 		{	// FrSkyX
