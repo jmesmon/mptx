@@ -629,6 +629,39 @@ static bool telem_update_multi(void)
 static inline bool telem_update_multi(void) { return false; }
 #endif
 
+#ifdef SPORT_TELEMETRY
+static void telem_update_sport(void)
+{
+	if (protocol==MODE_FRSKYX)
+	{	// FrSkyX
+		if(telemetry_link)
+		{		
+			if(pktt[4] & 0x80)
+				rssi=pktt[4] & 0x7F ;
+			else 
+				RxBt = (pktt[4]<<1) + 1 ;
+			if(pktt[6]<=6)
+				for (uint8_t i=0; i < pktt[6]; i++)
+					proces_sport_data(pktt[7+i]);
+			telemetry_link=0;
+		}
+		uint32_t now = micros();
+		if ((now - last) > SPORT_TIME)
+		{
+			sportSendFrame();
+#ifdef STM32_BOARD
+			last=now;
+#else
+			last += SPORT_TIME ;
+#endif
+		}
+	}
+}
+#else
+static inline void telem_update_sport(void) {}
+#endif
+
+
 void TelemetryUpdate()
 {
 	if (!tx_buff_has_space())
@@ -637,32 +670,7 @@ void TelemetryUpdate()
 	if (telem_update_multi())
 		return;
 
-	#if defined SPORT_TELEMETRY
-		if (protocol==MODE_FRSKYX)
-		{	// FrSkyX
-			if(telemetry_link)
-			{		
-				if(pktt[4] & 0x80)
-					rssi=pktt[4] & 0x7F ;
-				else 
-					RxBt = (pktt[4]<<1) + 1 ;
-				if(pktt[6]<=6)
-					for (uint8_t i=0; i < pktt[6]; i++)
-						proces_sport_data(pktt[7+i]);
-				telemetry_link=0;
-			}
-			uint32_t now = micros();
-			if ((now - last) > SPORT_TIME)
-			{
-				sportSendFrame();
-				#ifdef STM32_BOARD
-					last=now;
-				#else
-					last += SPORT_TIME ;
-				#endif
-			}
-		}
-	#endif					
+	telem_update_sport();
 
 	#if defined DSM_TELEMETRY
 		if(telemetry_link && protocol == MODE_DSM )
