@@ -195,7 +195,6 @@ static uint32_t random_id(uint16_t adress, uint8_t create_new);
 void PPM_Telemetry_serial_init();
 void Mprotocol_serial_init();
 void Update_All();
-static void set_rx_tx_addr(uint32_t id);
 
 static void modules_reset(void)
 {
@@ -986,7 +985,7 @@ void Mprotocol_serial_init()
 }
 
 // Convert 32b id to rx_tx_addr
-static void set_rx_tx_addr(uint32_t id)
+void set_rx_tx_addr(uint32_t id)
 { // Used by almost all protocols
 	rx_tx_addr[0] = (id >> 24) & 0xFF;
 	rx_tx_addr[1] = (id >> 16) & 0xFF;

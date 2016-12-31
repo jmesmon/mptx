@@ -658,3 +658,5 @@ extern uint8_t  crc8;
 #if defined(FRSKYX_CC2500_INO) || defined(SFHSS_CC2500_INO)
 extern uint8_t calData[48];
 #endif
+
+void set_rx_tx_addr(uint32_t id);
