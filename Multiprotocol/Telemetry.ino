@@ -677,6 +677,18 @@ static bool telem_update_dsm(void)
 static inline bool telem_update_dsm(void) { return false; }
 #endif
 
+#ifdef AFHDS2A_FW_TELEMETRY
+static void telem_update_afhds2a(void) {
+	if(telemetry_link == 2 && protocol == MODE_AFHDS2A)
+	{
+		AFHDSA_short_frame();
+		telemetry_link=0;
+	}
+}
+#else
+static inline void telem_update_afhds2a(void) {}
+#endif
+
 void TelemetryUpdate()
 {
 	if (!tx_buff_has_space())
@@ -690,13 +702,8 @@ void TelemetryUpdate()
 	if (telem_update_dsm())
 		return;
 
-    #if defined AFHDS2A_FW_TELEMETRY     
-        if(telemetry_link == 2 && protocol == MODE_AFHDS2A)
-		{
-			AFHDSA_short_frame();
-			telemetry_link=0;
-		}
-    #endif        
+	telem_update_afhds2a();
+
 		if(telemetry_link && protocol != MODE_FRSKYX )
 		{	// FrSkyD + Hubsan + AFHDS2A + Bayang
 			frsky_link_frame();
