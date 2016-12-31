@@ -701,6 +701,18 @@ static bool telem_update_frsky(void)
 	return false;
 }
 
+#ifdef HUB_TELEMETRY
+static void telem_update_hub(void)
+{
+	if(!telemetry_link && protocol == MODE_FRSKYD)
+	{	// FrSky
+		frsky_user_frame();
+	}
+}
+#else
+static inline void telem_update_hub(void) {}
+#endif
+
 void TelemetryUpdate()
 {
 	if (!tx_buff_has_space())
@@ -719,13 +731,7 @@ void TelemetryUpdate()
 	if (telem_update_frsky())
 		return;
 
-	#if defined HUB_TELEMETRY
-		if(!telemetry_link && protocol == MODE_FRSKYD)
-		{	// FrSky
-			frsky_user_frame();
-			return;
-		}
-	#endif
+	telem_update_hub();
 }
 
 void PPM_Telemetry_serial_init(void)
