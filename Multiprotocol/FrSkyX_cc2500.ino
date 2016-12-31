@@ -252,8 +252,8 @@ uint16_t ReadFrSkyX()
 			CC2500_Strobe(CC2500_SRX);
 			state++;
 			return 3000;
-		case FRSKY_DATA4:
-			len = CC2500_ReadReg(CC2500_3B_RXBYTES | CC2500_READ_BURST) & 0x7F;	
+		case FRSKY_DATA4: {
+			uint8_t len = CC2500_ReadReg(CC2500_3B_RXBYTES | CC2500_READ_BURST) & 0x7F;
 			if (len && (len<=(0x0E + 3)))				//Telemetry frame is 17
 			{
 				counter=0;
@@ -263,7 +263,7 @@ uint16_t ReadFrSkyX()
 					//parse telemetry packets here
 					//The same telemetry function used by FrSky(D8).
 				#endif
-			} 
+			}
 			else
 			{
 				counter++;
@@ -281,8 +281,9 @@ uint16_t ReadFrSkyX()
 			}
 			state = FRSKY_DATA1;
 			return 300;
-	}		
-	return 1;		
+		}
+	}
+	return 1;
 }
 
 uint16_t initFrSkyX()

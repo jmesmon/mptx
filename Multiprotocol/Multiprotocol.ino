@@ -122,7 +122,6 @@ uint8_t  crc8;
 uint16_t seed;
 //
 uint16_t state;
-uint8_t  len;
 uint8_t  RX_num;
 
 #if defined(FRSKYX_CC2500_INO) || defined(SFHSS_CC2500_INO)

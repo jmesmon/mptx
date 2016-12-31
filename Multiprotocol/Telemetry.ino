@@ -46,6 +46,8 @@ void telemetry_reset(void)
     TX_MAIN_PAUSE_off;
 }
 
+/* valid lenght of pktt */
+static uint8_t pktt_len;
 static uint8_t pktt[MAX_PKT];
 
 #if defined MULTI_TELEMETRY
@@ -175,8 +177,8 @@ static void frskySendStuffed(void)
 static void compute_RSSIdbm(void)
 {
 	
-	RSSI_dBm = (((uint16_t)(pktt[len-2])*18)>>4);
-	if(pktt[len-2] >=128)
+	RSSI_dBm = (((uint16_t)(pktt[pktt_len-2])*18)>>4);
+	if(pktt[pktt_len-2] >=128)
 		RSSI_dBm -= 164;
 	else
 		RSSI_dBm += 130;
@@ -185,7 +187,8 @@ static void compute_RSSIdbm(void)
 void frsky_check_telemetry(uint8_t *pkt,uint8_t len)
 {
 	if(pkt[1] == rx_tx_addr[3] && pkt[2] == rx_tx_addr[2] && len ==(pkt[0] + 3))
-	{	   
+	{
+		pktt_len = len;
 		for (uint8_t i=3;i<len;i++)
 			pktt[i]=pkt[i];				 
 		telemetry_link=1;

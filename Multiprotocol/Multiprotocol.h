@@ -651,7 +651,6 @@ extern uint8_t  rf_ch_num;
 extern uint8_t  channel;
 extern uint16_t servo_mid;
 extern uint16_t counter;
-extern uint8_t  len;
 extern uint8_t  binding_idx;
 extern uint16_t seed;
 extern uint8_t  crc8;
