@@ -9,6 +9,7 @@ addons:
         apt:
                 packages:
                         - gcc-avr
+                        - avr-libc
                         - cmake
                         - ninja-build
                         - ccache
