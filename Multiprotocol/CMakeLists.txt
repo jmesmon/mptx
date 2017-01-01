@@ -34,6 +34,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_COMPILE_FLAGS}")
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${CMAKE_COMPILE_FLAGS} ${CMAKE_C_FLAGS_WARN} -std=gnu99")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fwhole-program -Wl,--gc-sections")
 
+option(PRINT_GC_SECTIONS "Show sections that are garbage collected" OFF)
+if (PRINT_GC_SECTIONS)
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--print-gc-sections")
+endif()
+
 set(ARDUINO_SDK "arduino")
 
 
