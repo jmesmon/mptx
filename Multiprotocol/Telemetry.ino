@@ -652,7 +652,26 @@ static void telem_update_hub(void)
 static inline void telem_update_hub(void) {}
 #endif
 
-void TelemetryUpdate()
+static bool protocol_has_telemetry(void)
+{
+#ifdef MULTI_TELEMETRY
+    return true;
+#endif
+
+    switch (protocol) {
+    case MODE_FRSKYD:
+    case MODE_BAYANG:
+    case MODE_HUBSAN:
+    case MODE_AFHDS2A:
+    case MODE_FRSKYX:
+    case MODE_DSM:
+	return true;
+    default:
+	return false;
+    }
+}
+
+static void TelemetryUpdate(void)
 {
 	if (!tx_buff_has_space())
 		return;
@@ -671,6 +690,12 @@ void TelemetryUpdate()
 		return;
 
 	telem_update_hub();
+}
+
+void telemetry_update(void)
+{
+    if (protocol_has_telemetry())
+        TelemetryUpdate();
 }
 
 void PPM_Telemetry_serial_init(void)

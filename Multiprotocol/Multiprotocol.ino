@@ -527,18 +527,6 @@ static void update_ppm(void)
 static inline void update_ppm(void) {}
 #endif //ENABLE_PPM
 
-#ifdef TELEMETRY
-static void update_telemetry(void)
-{
-		#if !defined(MULTI_TELEMETRY)
-			if((protocol==MODE_FRSKYD) || (protocol==MODE_BAYANG) || (protocol==MODE_HUBSAN) || (protocol==MODE_AFHDS2A) || (protocol==MODE_FRSKYX) || (protocol==MODE_DSM) )
-		#endif
-			TelemetryUpdate();
-}
-#else
-static inline void update_telemetry(void) {}
-#endif
-
 // Update channels direction and Servo_AUX flags based on servo AUX positions
 static void update_channels_aux(void)
 {
@@ -600,7 +588,7 @@ static void Update_All(void)
 	update_serial();
 	update_ppm();
 	update_channels_aux();
-	update_telemetry();
+	telemetry_update();
 	update_led_status();
 }
 
