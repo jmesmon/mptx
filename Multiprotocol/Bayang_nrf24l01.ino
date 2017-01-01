@@ -42,7 +42,7 @@ enum BAYANG_FLAGS {
     BAYANG_FLAG_INVERTED	= 0x80 // inverted flight on Floureon H101
 };
 
-static void __attribute__((unused)) BAYANG_send_packet(uint8_t bind)
+static void BAYANG_send_packet(uint8_t bind)
 {
 	uint8_t i;
 	if (bind)
@@ -103,7 +103,7 @@ static void __attribute__((unused)) BAYANG_send_packet(uint8_t bind)
 	packet[12] = rx_tx_addr[2];	// txid[2]
 	packet[13] = sub_protocol==H8S3D?0x34:0x0A;
 	packet[14] = 0;
-    for (uint8_t i=0; i < BAYANG_PACKET_SIZE-1; i++)
+    for (i=0; i < BAYANG_PACKET_SIZE-1; i++)
 		packet[14] += packet[i];
 
 	NRF24L01_WriteReg(NRF24L01_05_RF_CH, bind ? BAYANG_RF_BIND_CHANNEL:hopping_frequency[hopping_frequency_no++]);
@@ -135,7 +135,7 @@ static void __attribute__((unused)) BAYANG_send_packet(uint8_t bind)
 }
 
 #ifdef BAYANG_HUB_TELEMETRY
-static void __attribute__((unused)) check_rx(void)
+static void check_rx(void)
 {
 	if (NRF24L01_ReadReg(NRF24L01_07_STATUS) & _BV(NRF24L01_07_RX_DR))
 	{ // data received from model
@@ -166,7 +166,7 @@ static void __attribute__((unused)) check_rx(void)
 }
 #endif
 
-static void __attribute__((unused)) BAYANG_init()
+static void BAYANG_init()
 {
 	NRF24L01_Initialize();
 	NRF24L01_SetTxRxMode(TX_EN);
@@ -238,7 +238,7 @@ uint16_t BAYANG_callback()
 	return BAYANG_PACKET_PERIOD;
 }
 
-static void __attribute__((unused)) BAYANG_initialize_txid()
+static void BAYANG_initialize_txid()
 {
 	//Could be using txid[0..2] but using rx_tx_addr everywhere instead...
 	hopping_frequency[0]=0;
