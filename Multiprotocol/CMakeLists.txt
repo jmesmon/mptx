@@ -23,7 +23,7 @@ SET(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
 set(CMAKE_COMPILE_FLAGS_WARN "${CMAKE_COMPILE_FLAGS_WARN} -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wwrite-strings -Werror=attributes -Wno-missing-field-initializers -Wmissing-declarations -Werror=missing-declarations")
 set(CMAKE_C_FLAGS_WARN "${CMAKE_C_FLAGS_WARN} -Wstrict-prototypes -Wold-style-definition -Wbad-function-cast")
 
-set(CMAKE_COMPILE_FLAGS "${CMAKE_COMPILE_FLAGS} ${CMAKE_COMPILE_FLAGS_WARN} -mmcu=atmega328p -Os -ggdb3 -fno-exceptions -fmerge-all-constants")
+set(CMAKE_COMPILE_FLAGS "${CMAKE_COMPILE_FLAGS} ${CMAKE_COMPILE_FLAGS_WARN} -mmcu=atmega328p -Os -ggdb3 -fno-exceptions -fmerge-all-constants -ffunction-sections -fdata-sections")
 set(CMAKE_COMPILE_FLAGS "${CMAKE_COMPILE_FLAGS}")
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -mmcu=atmega328p -Os -ggdb3")
 add_definitions("-DF_CPU=16000000L")
