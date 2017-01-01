@@ -164,15 +164,13 @@ typedef uint16_t (*void_function_t) (void);//pointer to a function with no param
 void_function_t remote_callback = 0;
 
 static void protocol_init();
-static void update_led_status(void);
-void update_serial_data();
+static void update_serial_data(void);
 inline void tx_resume();
 inline void tx_pause();
-static void update_channels_aux(void);
 static uint32_t random_id(uint16_t adress, uint8_t create_new);
 void PPM_Telemetry_serial_init();
 void Mprotocol_serial_init();
-void Update_All();
+static void Update_All(void);
 
 static void modules_reset(void)
 {
@@ -484,49 +482,62 @@ void loop()
 	}
 }
 
-void Update_All()
+#ifdef ENABLE_SERIAL
+static void update_serial(void)
 {
-	#ifdef ENABLE_SERIAL
-		if(mode_select==MODE_SERIAL && IS_RX_FLAG_on)		// Serial mode and something has been received
-		{
-			update_serial_data();							// Update protocol and data
-			if(IS_CHANGE_PROTOCOL_FLAG_on)
-			{ // Protocol needs to be changed
-				LED_off;									//led off during protocol init
-				modules_reset();							//reset all modules
-				protocol_init();							//init new protocol
-			}
-			INPUT_SIGNAL_on;								//valid signal received
-			last_signal=millis();
+
+	if(mode_select==MODE_SERIAL && IS_RX_FLAG_on)		// Serial mode and something has been received
+	{
+		update_serial_data();							// Update protocol and data
+		if(IS_CHANGE_PROTOCOL_FLAG_on)
+		{ // Protocol needs to be changed
+			LED_off;									//led off during protocol init
+			modules_reset();							//reset all modules
+			protocol_init();							//init new protocol
 		}
-	#endif //ENABLE_SERIAL
-	#ifdef ENABLE_PPM
-		if(mode_select!=MODE_SERIAL && IS_PPM_FLAG_on)		// PPM mode and a full frame has been received
-		{
-			for(uint8_t i=0;i<NUM_CHN;i++)
-			{ // update servo data without interrupts to prevent bad read in protocols
-				uint16_t temp_ppm ;
-				cli();										// disable global int
-				temp_ppm = PPM_data[i] ;
-				sei();										// enable global int
-				if(temp_ppm<PPM_MIN_125) temp_ppm=PPM_MIN_125;
-				else if(temp_ppm>PPM_MAX_125) temp_ppm=PPM_MAX_125;
-				Servo_data[i]= temp_ppm ;
-			}
-			PPM_FLAG_off;									// wait for next frame before update
-			INPUT_SIGNAL_on;								//valid signal received
-			last_signal=millis();
+		INPUT_SIGNAL_on;								//valid signal received
+		last_signal=millis();
+	}
+}
+#else
+static inline void update_serial(void) {}
+#endif //ENABLE_SERIAL
+
+#ifdef ENABLE_PPM
+static void update_ppm(void)
+{
+	if(mode_select!=MODE_SERIAL && IS_PPM_FLAG_on)		// PPM mode and a full frame has been received
+	{
+		for(uint8_t i=0;i<NUM_CHN;i++)
+		{ // update servo data without interrupts to prevent bad read in protocols
+			uint16_t temp_ppm ;
+			cli();										// disable global int
+			temp_ppm = PPM_data[i] ;
+			sei();										// enable global int
+			if(temp_ppm<PPM_MIN_125) temp_ppm=PPM_MIN_125;
+			else if(temp_ppm>PPM_MAX_125) temp_ppm=PPM_MAX_125;
+			Servo_data[i]= temp_ppm ;
 		}
-	#endif //ENABLE_PPM
-	update_channels_aux();
-	#if defined(TELEMETRY)
+		PPM_FLAG_off;									// wait for next frame before update
+		INPUT_SIGNAL_on;								//valid signal received
+		last_signal=millis();
+	}
+}
+#else
+static inline void update_ppm(void) {}
+#endif //ENABLE_PPM
+
+#ifdef TELEMETRY
+static void update_telemetry(void)
+{
 		#if !defined(MULTI_TELEMETRY)
 			if((protocol==MODE_FRSKYD) || (protocol==MODE_BAYANG) || (protocol==MODE_HUBSAN) || (protocol==MODE_AFHDS2A) || (protocol==MODE_FRSKYX) || (protocol==MODE_DSM) )
 		#endif
 			TelemetryUpdate();
-	#endif
-	update_led_status();
 }
+#else
+static inline void update_telemetry(void) {}
+#endif
 
 // Update channels direction and Servo_AUX flags based on servo AUX positions
 static void update_channels_aux(void)
@@ -582,6 +593,15 @@ static void update_led_status(void)
 			}
 		LED_toggle;
 	}
+}
+
+static void Update_All(void)
+{
+	update_serial();
+	update_ppm();
+	update_channels_aux();
+	update_telemetry();
+	update_led_status();
 }
 
 #ifdef STM32_BOARD	
@@ -848,7 +868,7 @@ static void protocol_init(void)
 	BIND_BUTTON_FLAG_off;						// do not bind/reset id anymore even if protocol change
 }
 
-void update_serial_data()
+static void update_serial_data(void)
 {
 	RX_DONOTUPDTAE_on;
 	RX_FLAG_off;								//data is being processed
