@@ -29,14 +29,14 @@ uint8_t chanskip;
 uint8_t counter_rst;
 uint8_t ctr;
 
-static void __attribute__((unused)) set_start(uint8_t ch )
+static void set_start(uint8_t ch )
 {
 	CC2500_Strobe(CC2500_SIDLE);
 	CC2500_WriteReg(CC2500_25_FSCAL1, calData[ch]);
 	CC2500_WriteReg(CC2500_0A_CHANNR, hopping_frequency[ch]);
 }		
 
-static void __attribute__((unused)) frskyX_init()
+static void frskyX_init(void)
 {
 	for(uint8_t i=0;i<36;i++)
 	{
@@ -83,7 +83,7 @@ static void __attribute__((unused)) frskyX_init()
 	//#######END INIT########		
 }
 
-static void __attribute__((unused)) initialize_data(uint8_t adr)
+static void initialize_data(uint8_t adr)
 {
 	CC2500_WriteReg(CC2500_0C_FSCTRL0,option);	// Frequency offset hack 
 	CC2500_WriteReg(CC2500_18_MCSM0,    0x8);	
@@ -102,7 +102,7 @@ static uint16_t CRCTable(uint8_t val)
 	val /= 16 ;
 	return word ^ (0x1081 * val) ;
 }
-static uint16_t __attribute__((unused)) crc_x(uint8_t *data, uint8_t len)
+static uint16_t crc_x(uint8_t *data, uint8_t len)
 {
 	uint16_t crc = 0;
 	for(uint8_t i=0; i < len; i++)
@@ -113,12 +113,12 @@ static uint16_t __attribute__((unused)) crc_x(uint8_t *data, uint8_t len)
  // 0-2047, 0 = 817, 1024 = 1500, 2047 = 2182
  //64=860,1024=1500,1984=2140//Taranis 125%
 
-static uint16_t  __attribute__((unused)) scaleForPXX( uint8_t i )
+static uint16_t scaleForPXX( uint8_t i )
 {	//mapped 860,2140(125%) range to 64,1984(PXX values);
 	return (uint16_t)(((Servo_data[i]-servo_min_125)*3)>>1)+64;
 }
 
-static void __attribute__((unused)) frskyX_build_bind_packet()
+static void frskyX_build_bind_packet()
 {
 	packet[0] = 0x1D;       
 	packet[1] = 0x03;          
@@ -144,7 +144,7 @@ static void __attribute__((unused)) frskyX_build_bind_packet()
 	//
 }
 
-static void __attribute__((unused)) frskyX_data_frame()
+static void frskyX_data_frame(void)
 {
 	//0x1D 0xB3 0xFD 0x02 0x56 0x07 0x15 0x00 0x00 0x00 0x04 0x40 0x00 0x04 0x40 0x00 0x04 0x40 0x00 0x04 0x40 0x08 0x00 0x00 0x00 0x00 0x00 0x00 0x96 0x12
 	//
@@ -286,7 +286,7 @@ uint16_t ReadFrSkyX()
 	return 1;
 }
 
-uint16_t initFrSkyX()
+uint16_t initFrSkyX(void)
 {
 	set_rx_tx_addr(MProtocol_id_master);
 	Frsky_init_hop();
@@ -305,7 +305,7 @@ uint16_t initFrSkyX()
 	CC2500_SetTxRxMode(TX_EN);
 	//
 	if(IS_AUTOBIND_FLAG_on)
-	{	   
+	{
 		state = FRSKY_BIND;
 		initialize_data(1);
 	}
@@ -317,5 +317,5 @@ uint16_t initFrSkyX()
 	seq_last_sent = 0;
 	seq_last_rcvd = 8;
 	return 10000;
-}	
+}
 #endif
