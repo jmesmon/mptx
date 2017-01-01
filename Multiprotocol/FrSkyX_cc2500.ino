@@ -25,9 +25,9 @@
 #include "Common.hh"
 #include "iface_cc2500.h"
 
-uint8_t chanskip;
-uint8_t counter_rst;
-uint8_t ctr;
+static uint8_t chanskip;
+static uint8_t counter_rst;
+static uint8_t ctr;
 
 static void set_start(uint8_t ch )
 {
