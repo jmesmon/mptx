@@ -43,7 +43,7 @@ static const uint8_t init_2801[] = {0xc5, 0x34, 0x60, 0x00, 0x25};
 static const uint8_t init_2601[] = {0xb9, 0x45, 0xb0, 0xf1, 0x3a};
 static const uint8_t init_2401[] = {0xa5, 0x23, 0xd0, 0xf0, 0x00};
 
-uint8_t WK_last_beacon;
+static uint8_t WK_last_beacon;
 
 static void __attribute__((unused)) WK_add_pkt_crc(uint8_t init)
 {
