@@ -58,6 +58,7 @@ enum PROTOCOLS
 	MODE_OPENLRS		= 27,	// =>OpenLRS hardware
 	MODE_AFHDS2A		= 28,	// =>A7105
 	MODE_Q2X2		= 29,	// =>NRF24L01, extension of CX-10 protocol
+	MODE_WK2x01		= 30,	// =>CYRF6936
 };
 
 enum Flysky
@@ -176,6 +177,15 @@ enum FY326
 	FY326	= 0,
 	FY319	= 1,
 };
+enum WK2x01
+{
+	WK2801	= 0,
+	WK2401	= 1,
+	W6_5_1	= 2,
+	W6_6_1	= 3,
+	W6_HEL	= 4,
+	W6_HEL_I= 5,
+};
 
 #define NONE 		0
 #define P_HIGH		1
@@ -267,6 +277,11 @@ enum MultiPacketTypes {
 #define INPUT_SIGNAL_on		protocol_flags2 |= _BV(5)
 #define IS_INPUT_SIGNAL_on	( ( protocol_flags2 & _BV(5) ) !=0 )
 #define IS_INPUT_SIGNAL_off	( ( protocol_flags2 & _BV(5) ) ==0 )
+//CH16
+#define BIND_CH_PREV_off	protocol_flags2 &= ~_BV(6)
+#define BIND_CH_PREV_on		protocol_flags2 |= _BV(6)
+#define IS_BIND_CH_PREV_on	( ( protocol_flags2 & _BV(6) ) !=0 )
+#define IS_BIND_CH_PREV_off	( ( protocol_flags2 & _BV(6) ) ==0 )
 
 //********************
 //*** Blink timing ***
@@ -445,6 +460,7 @@ Serial: 100000 Baud 8e2      _ xxxx xxxx p --
 					OpenLRS		27
 					AFHDS2A		28
 					Q2X2		29
+					WK2x01		30
    BindBit=>		0x80	1=Bind/0=No
    AutoBindBit=>	0x40	1=Yes /0=No
    RangeCheck=>		0x20	1=Yes /0=No
@@ -532,6 +548,13 @@ Serial: 100000 Baud 8e2      _ xxxx xxxx p --
 		sub_protocol==FY326
 			FY326		0
 			FY319		1
+		sub_protocol==WK2x01
+			WK2801		0
+			WK2401		1
+			W6_5_1		2
+			W6_6_1		3
+			W6_HEL		4
+			W6_HEL_I	5
 
    Power value => 0x80	0=High/1=Low
   Stream[3]   = option_protocol;

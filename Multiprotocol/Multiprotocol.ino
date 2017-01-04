@@ -485,16 +485,9 @@ void loop()
 #ifdef ENABLE_SERIAL
 static void update_serial(void)
 {
-
 	if(mode_select==MODE_SERIAL && IS_RX_FLAG_on)		// Serial mode and something has been received
 	{
 		update_serial_data();							// Update protocol and data
-		if(IS_CHANGE_PROTOCOL_FLAG_on)
-		{ // Protocol needs to be changed
-			LED_off;									//led off during protocol init
-			modules_reset();							//reset all modules
-			protocol_init();							//init new protocol
-		}
 		INPUT_SIGNAL_on;								//valid signal received
 		last_signal=millis();
 	}
@@ -589,6 +582,21 @@ static void Update_All(void)
 	update_ppm();
 	update_channels_aux();
 	telemetry_update();
+	#ifdef ENABLE_BIND_CH
+		if(IS_AUTOBIND_FLAG_on && IS_BIND_CH_PREV_off && Servo_data[BIND_CH-1]>PPM_MAX_COMMAND && Servo_data[THROTTLE]<(servo_min_100+25))
+		{ // Autobind is on and BIND_CH went up and Throttle is low
+			CHANGE_PROTOCOL_FLAG_on;							//reload protocol to rebind
+			BIND_CH_PREV_on;
+		}
+		if(IS_BIND_CH_PREV_on && Servo_data[BIND_CH-1]<PPM_MIN_COMMAND)
+			BIND_CH_PREV_off;
+	#endif //ENABLE_BIND_CH
+	if(IS_CHANGE_PROTOCOL_FLAG_on)
+	{ // Protocol needs to be changed or relaunched for bind
+		LED_off;											//led off during protocol init
+		modules_reset();									//reset all modules
+		protocol_init();									//init new protocol
+	}
 	update_led_status();
 }
 
@@ -612,6 +620,7 @@ static void protocol_init(void)
 {
 	uint16_t next_callback=0;		// Default is immediate call back
 	remote_callback = 0;
+	CHANGE_PROTOCOL_FLAG_off;
 
 	// reset telemetry
 	telemetry_reset();
@@ -728,6 +737,13 @@ static void protocol_init(void)
 					PE2_on;	//antenna RF4
 					next_callback = initJ6Pro();
 					remote_callback = ReadJ6Pro;
+					break;
+			#endif
+			#if defined(WK2x01_CYRF6936_INO)
+				case MODE_WK2x01:
+					PE2_on;	//antenna RF4
+					next_callback = WK_setup();
+					remote_callback = WK_cb;
 					break;
 			#endif
 		#endif
@@ -990,7 +1006,13 @@ static uint32_t random_id(uint16_t adress, uint8_t create_new)
 			return id;
 	}
 	// Generate a random ID
-	id = random(0xfefefefe) + ((uint32_t)random(0xfefefefe) << 16);
+	#if defined STM32_BOARD
+		#define STM32_UUID ((uint32_t *)0x1FFFF7E8)
+		if (!create_new)
+			id = STM32_UUID[0] ^ STM32_UUID[1] ^ STM32_UUID[2];
+	#else
+		id = random(0xfefefefe) + ((uint32_t)random(0xfefefefe) << 16);
+	#endif
 	for(uint8_t i=0;i<4;i++)
 	{
 		eeprom_write_byte((EE_ADDR)adress+i,id);

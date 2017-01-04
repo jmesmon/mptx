@@ -39,6 +39,7 @@
 	#undef	DEVO_CYRF6936_INO
 	#undef	DSM_CYRF6936_INO
 	#undef	J6PRO_CYRF6936_INO
+	#undef	WK2x01_CYRF6936_INO
 #endif
 #ifndef CC2500_INSTALLED
 	#undef	FRSKYD_CC2500_INO
@@ -109,4 +110,13 @@
 #endif
 #if ! defined(PPM_MAX_100) || ! defined(PPM_MIN_100) || ! defined(PPM_MAX_125) || ! defined(PPM_MIN_125)
 	#error You must set correct TX end points.
+#endif
+
+#if defined(ENABLE_BIND_CH)
+	#if BIND_CH<4
+		#error BIND_CH must be above 4.
+	#endif
+	#if BIND_CH>16
+		#error BIND_CH must be below or equal to 16.
+	#endif
 #endif

@@ -1,4 +1,6 @@
+#include "_Config.h"
 #include "serial.hh"
+#include "Pins.h"
 #include <stdint.h>
 #include <avr/interrupt.h>
 
@@ -165,15 +167,15 @@ void initTXSerial( uint8_t speed)
 }
 
 //Serial TX
-#ifdef ORANGE_TX
+# ifdef ORANGE_TX
     ISR(USARTC0_DRE_vect)
-#else
+# else
     #ifdef STM32_BOARD
         void __irq_usart3()			
     #else
         ISR(USART_UDRE_vect)
     #endif
-#endif
+# endif
 {	// Transmit interrupt
     #ifdef STM32_BOARD
         if(USART3_BASE->SR & USART_SR_TXE)
@@ -191,11 +193,11 @@ void initTXSerial( uint8_t speed)
     }
     if (tx_tail == tx_head)
         tx_pause(); // Check if all data is transmitted . if yes disable transmitter UDRE interrupt
-    #ifdef STM32_BOARD	
-        }
-    #endif		
+# ifdef STM32_BOARD	
+	}
+# endif		
 }
-#ifdef STM32_BOARD
+# ifdef STM32_BOARD
     void usart2_begin(uint32_t baud,uint32_t config )
     {
         usart_init(USART2); 
@@ -210,8 +212,10 @@ void initTXSerial( uint8_t speed)
         usart_set_baud_rate(USART3, STM32_PCLK1, baud);
         usart_enable(USART3);
     }
+# endif
 #endif
-#else	//BASH_SERIAL
+
+#ifdef BASH_SERIAL
 // Routines for bit-bashed serial output
 
 // Speed is 0 for 100K and 1 for 9600

@@ -169,7 +169,7 @@ static const uint8_t PROGMEM data_vals[][2] = {
 	{CYRF_1E_RX_OVERRIDE, 0x00},			// CRC16 enabled, no ACK
 };
 
-static void cyrf_config(void)
+static void DSM_cyrf_config()
 {
 	for(uint8_t i = 0; i < sizeof(init_vals) / 2; i++)
 		CYRF_WriteRegister(pgm_read_byte_near(&init_vals[i][0]), pgm_read_byte_near(&init_vals[i][1]));
@@ -177,7 +177,7 @@ static void cyrf_config(void)
 	CYRF_ConfigRFChannel(0x61);
 }
 
-static void build_bind_packet(void)
+static void DSM_build_bind_packet()
 {
 	uint8_t i;
 	uint16_t sum = 384 - 0x10;//
@@ -216,21 +216,21 @@ static void build_bind_packet(void)
 	packet[15] = sum & 0xff;
 }
 
-static void initialize_bind_phase(void)
+static void DSM_initialize_bind_phase()
 {
 	CYRF_ConfigRFChannel(DSM_BIND_CHANNEL); //This seems to be random?
 	//64 SDR Mode is configured so only the 8 first values are needed but need to write 16 values...
 	CYRF_ConfigDataCode((const uint8_t*)"\xD7\xA1\x54\xB1\x5E\x89\xAE\x86\xc6\x94\x22\xfe\x48\xe6\x57\x4e", 16);
-	build_bind_packet();
+	DSM_build_bind_packet();
 }
 
-static void cyrf_configdata(void)
+static void DSM_cyrf_configdata()
 {
 	for(uint8_t i = 0; i < sizeof(data_vals) / 2; i++)
 		CYRF_WriteRegister(pgm_read_byte_near(&data_vals[i][0]), pgm_read_byte_near(&data_vals[i][1]));
 }
 
-static void update_channels(void)
+static void DSM_update_channels()
 {
 	prev_option=option;
 	if(sub_protocol==DSM_AUTO)
@@ -248,13 +248,13 @@ static void update_channels(void)
 		ch_map[i]=pgm_read_byte_near(&ch_map_progmem[idx][i]);
 }
 
-static void build_data_packet(uint8_t upper)
+static void DSM_build_data_packet(uint8_t upper)
 {
 	uint16_t max = 2047;
 	uint8_t bits = 11;
 
 	if(prev_option!=option)
-		update_channels();
+		DSM_update_channels();
 
 	if (sub_protocol==DSMX_11 || sub_protocol==DSMX_22 )
 	{
@@ -293,7 +293,7 @@ static void build_data_packet(uint8_t upper)
 	}
 }
 
-static void set_sop_data_crc(void)
+static void DSM_set_sop_data_crc()
 {
 	//The crc for channel '1' is NOT(mfgid[0] << 8 + mfgid[1])
 	//The crc for channel '2' is (mfgid[0] << 8 + mfgid[1])
@@ -319,7 +319,7 @@ static void set_sop_data_crc(void)
 		hopping_frequency_no %=2;
 }
 
-static void calc_dsmx_channel(void)
+static void DSM_calc_dsmx_channel()
 {
 	uint8_t idx = 0;
 	uint32_t id = ~(((uint32_t)cyrfmfg_id[0] << 24) | ((uint32_t)cyrfmfg_id[1] << 16) | ((uint32_t)cyrfmfg_id[2] << 8) | (cyrfmfg_id[3] << 0));
@@ -438,17 +438,17 @@ uint16_t ReadDsm(void)
 	#endif
 		case DSM_CHANSEL:
 			BIND_DONE;
-			cyrf_configdata();
+			DSM_cyrf_configdata();
 			CYRF_SetTxRxMode(TX_EN);
 			hopping_frequency_no = 0;
 			phase = DSM_CH1_WRITE_A;						// in fact phase++
-			set_sop_data_crc();
+			DSM_set_sop_data_crc();
 			return 10000;
 		case DSM_CH1_WRITE_A:
 		case DSM_CH1_WRITE_B:
 		case DSM_CH2_WRITE_A:
 		case DSM_CH2_WRITE_B:
-			build_data_packet(phase == DSM_CH1_WRITE_B||phase == DSM_CH2_WRITE_B);	// build lower or upper channels
+			DSM_build_data_packet(phase == DSM_CH1_WRITE_B||phase == DSM_CH2_WRITE_B);	// build lower or upper channels
 			CYRF_ReadRegister(CYRF_04_TX_IRQ_STATUS);		// clear IRQ flags
 			CYRF_WriteDataPacket(packet);
 			phase++;										// change from WRITE to CHECK mode
@@ -468,12 +468,12 @@ uint16_t ReadDsm(void)
 					if (((CYRF_ReadRegister(CYRF_04_TX_IRQ_STATUS) & 0x22) == 0x20) || (CYRF_ReadRegister(CYRF_02_TX_CTRL) & 0x80))
 					{
 						CYRF_Reset();
-						cyrf_config();
-						cyrf_configdata();
+						DSM_cyrf_config();
+						DSM_cyrf_configdata();
 						CYRF_SetTxRxMode(TX_EN);
 					}
 				#endif
-				set_sop_data_crc();
+				DSM_set_sop_data_crc();
 				phase++;										// change from CH1_CHECK to CH2_WRITE
 				return DSM_CH1_CH2_DELAY - DSM_WRITE_DELAY;
 			}
@@ -515,11 +515,11 @@ uint16_t ReadDsm(void)
 				phase = DSM_CH1_WRITE_A;					//Transmit lower
 			CYRF_SetTxRxMode(TX_EN);						//TX mode
 			CYRF_WriteRegister(CYRF_29_RX_ABORT, 0x00);		//Clear abort RX operation
-			set_sop_data_crc();
+			DSM_set_sop_data_crc();
 			return DSM_READ_DELAY;
 #else
 			// No telemetry
-			set_sop_data_crc();
+			DSM_set_sop_data_crc();
 			if (phase == DSM_CH2_CHECK_A)
 			{
 				if(DSM_num_ch > 7 || sub_protocol==DSM2_11 || sub_protocol==DSMX_11)
@@ -553,7 +553,7 @@ uint16_t initDsm(void)
 	}
 	//Hopping frequencies
 	if (sub_protocol == DSMX_11 || sub_protocol == DSMX_22)
-		calc_dsmx_channel();
+		DSM_calc_dsmx_channel();
 	else
 	{ 
 		uint8_t tmpch[10];
@@ -570,15 +570,15 @@ uint16_t initDsm(void)
 		hopping_frequency[1] = tmpch[idx];
 	}
 	//
-	cyrf_config();
+	DSM_cyrf_config();
 	CYRF_SetTxRxMode(TX_EN);
 	//
-	update_channels();
+	DSM_update_channels();
 	//
 	if(IS_AUTOBIND_FLAG_on )
 	{
 		BIND_IN_PROGRESS;
-		initialize_bind_phase();		
+		DSM_initialize_bind_phase();		
 		phase = DSM_BIND_WRITE;
 		bind_counter=DSM_BIND_COUNT;
 	}
