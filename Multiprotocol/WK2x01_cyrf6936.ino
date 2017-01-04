@@ -15,6 +15,8 @@
 
 #if defined(WK2x01_CYRF6936_INO)
 
+#include "WK2x01_cyrf6936.hh"
+#include "CYRF6936_SPI.hh"
 #include "iface_cyrf6936.h"
 
 #define WK_BIND_COUNT 2980

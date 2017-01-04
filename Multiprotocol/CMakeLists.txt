@@ -134,5 +134,6 @@ add_arduino_exe(multi
 	Multiprotocol.ino NRF24l01_SPI.ino  SFHSS_cc2500.ino
 	SHENQI_nrf24l01.ino SLT_nrf24l01.ino SPI.ino Symax_nrf24l01.ino
 	Telemetry.ino V2X2_nrf24l01.ino YD717_nrf24l01.ino
+	WK2x01_cyrf6936.ino
 	board/atmega328p/random.c serial.cc
 )

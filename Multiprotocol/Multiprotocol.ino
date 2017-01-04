@@ -58,6 +58,7 @@
 #include "Symax_nrf24l01.hh"
 #include "V2X2_nrf24l01.hh"
 #include "YD717_nrf24l01.hh"
+#include "WK2x01_cyrf6936.hh"
 
 //Multiprotocol module configuration file
 #include "_Config.h"
