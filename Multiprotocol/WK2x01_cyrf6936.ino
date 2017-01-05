@@ -18,6 +18,7 @@
 #include "WK2x01_cyrf6936.hh"
 #include "CYRF6936_SPI.hh"
 #include "iface_cyrf6936.h"
+#include "Pins.h"
 
 #define WK_BIND_COUNT 2980
 #define WK_NUM_WAIT_LOOPS (100 / 5) //each loop is ~5us.  Do not wait more than 100us
