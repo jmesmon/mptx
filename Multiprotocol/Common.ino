@@ -77,6 +77,7 @@ uint16_t limit_channel_100(uint8_t ch)
 /******************************/
 /**  FrSky D and X routines  **/
 /******************************/
+#if defined(FRSKYD_CC2500_INO) || defined(FRSKYX_CC2500_INO)
 void Frsky_init_hop(void)
 {
 	uint8_t val;
@@ -97,3 +98,4 @@ void Frsky_init_hop(void)
 		hopping_frequency[i]=i>47?0:val;
 	}
 }
+#endif
