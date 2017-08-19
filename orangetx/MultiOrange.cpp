@@ -1,4 +1,5 @@
-#define ARDUINO_AVR_PRO		1
+#define ARDUINO_AVR_PRO                1
+
 //#define __AVR_ATmega328P__	1
 
 #define ORANGE_TX	1
@@ -144,7 +145,7 @@ void init()
 #include "Common.ino"
 #include "Arduino.ino"
 
-#include "cyrf6936_SPI.ino"
+#include "CYRF6936_SPI.ino"
 #include "DSM_cyrf6936.ino"
 #include "Devo_cyrf6936.ino"
 #include "J6Pro_cyrf6936.ino"

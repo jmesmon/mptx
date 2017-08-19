@@ -72,7 +72,7 @@ SRC =
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC = $(TARGET).cpp
-CPPSRC += Wmath.cpp
+CPPSRC += WMath.cpp
 #CPPSRC += DSM2_cyrf6936.cpp
 
 # List Assembler source files here.
@@ -185,6 +185,7 @@ CPPFLAGS += -Wa,-adlns=$(<:%.cpp=$(OBJDIR)/%.lst)
 CPPFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 #CPPFLAGS += $(CSTANDARD)
 #CPPFLAGS += -Wa,-adhlns=$(<:%.cpp=$(OBJDIR)/%.lst)
+CPPFLAGS += -I../Multiprotocol
 
 
 #---------------- Assembler Options ----------------
